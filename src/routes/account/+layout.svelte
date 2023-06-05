@@ -7,8 +7,6 @@
 		Avatar,
 		Drawer,
 		LightSwitch,
-		Modal,
-		Toast,
 		drawerStore,
 		popup,
 		type PopupSettings
@@ -17,7 +15,9 @@
 
 	export let data;
 
-	$: ({ avatarSrc, avatarFallback, userId, supabase } = data);
+	$: ({ avatarSrc, avatarFallback, userId, supabase, session } = data);
+
+	$: if (!session) goto('/');
 
 	function drawerOpen(): void {
 		drawerStore.open();
@@ -34,8 +34,6 @@
 	}
 </script>
 
-<Toast position="tr" />
-<Modal />
 <Drawer bgDrawer="bg-primary-500">
 	<Navigation {userId} />
 </Drawer>

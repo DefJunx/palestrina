@@ -6,9 +6,9 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 
-	import { invalidate } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
-	import { storePopup } from '@skeletonlabs/skeleton';
+	import { Modal, Toast, storePopup } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
@@ -26,7 +26,12 @@
 
 		return () => data.subscription.unsubscribe();
 	});
+
+	$: if (session && session.expires_at) goto('/account');
 </script>
+
+<Toast position="tr" />
+<Modal />
 
 <svelte:head>
 	<title>Palestrina</title>

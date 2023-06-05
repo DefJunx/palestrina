@@ -3,6 +3,8 @@
 	import { Auth } from '@supabase/auth-ui-svelte';
 
 	export let data;
+
+	let status: 'login' | 'forgotpsw' | 'register' = 'login';
 </script>
 
 <div class="flex h-screen items-center justify-center">
