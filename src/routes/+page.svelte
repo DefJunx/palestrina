@@ -7,7 +7,7 @@
 
 	export let data;
 
-	let formView: 'login' | 'forgotpsw' | 'register' = 'register';
+	let formView: 'login' | 'forgotpsw' | 'register' = 'login';
 	let loading = false;
 
 	const {
@@ -64,6 +64,9 @@
 				{/if}
 			</div>
 			<button disabled={loading} class="btn variant-filled-primary" type="submit">Login</button>
+			<button type="button" class="anchor cursor-pointer" on:click={(e) => (formView = 'register')}>
+				Non hai un account?
+			</button>
 		</form>
 	{:else if formView === 'register'}
 		{#if $page.status >= 400 && $registerMessage}
