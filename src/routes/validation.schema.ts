@@ -9,3 +9,5 @@ export const loginSchema = z.object({
 		.string({ required_error: 'Per favore compila questo campo' })
 		.nonempty({ message: 'Per favore compila questo campo' })
 });
+
+export const registerSchema = loginSchema;

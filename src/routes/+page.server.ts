@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
-import { loginSchema } from './validation.schema.js';
+import { loginSchema, registerSchema } from './validation.schema.js';
 
 export async function load({ url, locals: { getSession } }) {
 	const session = await getSession();
@@ -10,8 +10,9 @@ export async function load({ url, locals: { getSession } }) {
 	}
 
 	const loginForm = await superValidate(loginSchema, { id: 'loginForm' });
+	const registerForm = await superValidate(registerSchema, { id: 'registerForm' });
 
-	return { url: url.origin, loginForm };
+	return { url: url.origin, loginForm, registerForm };
 }
 
 export const actions = {
@@ -26,8 +27,27 @@ export const actions = {
 
 		const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
 
-		if (loginError) return message(loginForm, loginError.message);
+		if (loginError) {
+			return message(loginForm, loginError.message, { status: 400 });
+		}
 
 		throw redirect(303, url.searchParams.get('redirectTo') ?? '/account');
+	},
+	register: async ({ request, locals: { supabase }, url }) => {
+		const registerForm = await superValidate(request, registerSchema, { id: 'registerForm' });
+
+		if (!registerForm.valid) return fail(400, { registerForm });
+
+		const {
+			data: { email, password }
+		} = registerForm;
+
+		const { error: registerError } = await supabase.auth.signUp({ email, password });
+
+		if (registerError) {
+			return message(registerForm, registerError.message, { status: 400 });
+		}
+
+		// return
 	}
 };
