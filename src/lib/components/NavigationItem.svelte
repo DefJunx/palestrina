@@ -9,7 +9,8 @@
 		drawerStore.close();
 	}
 
-	$: classesActive = (href: string) => (href === $page.url.pathname ? '!bg-secondary-500' : '');
+	$: classesActive = (href: string) =>
+		href === $page.url.pathname ? '!bg-secondary-500 !text-white' : '';
 </script>
 
 <a {href} class="text-black flex items-center {classesActive(href)}" on:click={drawerClose}>
