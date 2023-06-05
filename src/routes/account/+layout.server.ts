@@ -1,4 +1,4 @@
-import { getAvatarUrl, handleLoginRedirect } from '$src/lib/utils.js';
+import { getAvatarFallbackfromName, getAvatarUrl, handleLoginRedirect } from '$src/lib/utils.js';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load(event) {
@@ -20,6 +20,7 @@ export async function load(event) {
 		userId: user.id,
 		avatarSrc: userProfile.avatar_path
 			? getAvatarUrl(event.locals.supabase, userProfile.avatar_path)
-			: ''
+			: '',
+		avatarFallback: userProfile.full_name ? getAvatarFallbackfromName(userProfile.full_name) : ''
 	};
 }

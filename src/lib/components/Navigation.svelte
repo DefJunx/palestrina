@@ -1,16 +1,49 @@
 <script lang="ts">
-	import { drawerStore } from '@skeletonlabs/skeleton';
+	import { Calendar, ClipboardEdit, Dumbbell, Home, User } from 'lucide-svelte';
+	import NavigationItem from './NavigationItem.svelte';
 
-	function drawerClose(): void {
-		drawerStore.close();
-	}
+	export let userId: string;
 </script>
 
 <nav class="list-nav p-4">
 	<ul>
-		<li><a href="/" on:click={drawerClose}>Home</a></li>
-		<li><a href="/?test=1" on:click={drawerClose}>Other Page 1</a></li>
-		<li><a href="/?test=2" on:click={drawerClose}>Other Page 2</a></li>
-		<li><a href="/?test=3" on:click={drawerClose}>Other Page 3</a></li>
+		<li>
+			<NavigationItem href="/account" label="Home">
+				<svelte:fragment slot="icon">
+					<Home />
+				</svelte:fragment>
+			</NavigationItem>
+		</li>
+		<li>
+			<NavigationItem href={`/account/${userId}/training`} label="Allenamenti">
+				<svelte:fragment slot="icon">
+					<Dumbbell />
+				</svelte:fragment>
+			</NavigationItem>
+		</li>
+		<li>
+			<NavigationItem href="/account/booking" label="Prenotazioni">
+				<svelte:fragment slot="icon">
+					<Calendar />
+				</svelte:fragment>
+			</NavigationItem>
+		</li>
+	</ul>
+	<h2 class="mt-8 text-center underline text-black text-lg">Gestione</h2>
+	<ul class="mt-4">
+		<li>
+			<NavigationItem href="/account/users" label="Utenti">
+				<svelte:fragment slot="icon">
+					<User />
+				</svelte:fragment>
+			</NavigationItem>
+		</li>
+		<li>
+			<NavigationItem href="/account/exercises" label="Esercizi">
+				<svelte:fragment slot="icon">
+					<ClipboardEdit />
+				</svelte:fragment>
+			</NavigationItem>
+		</li>
 	</ul>
 </nav>

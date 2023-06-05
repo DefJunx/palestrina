@@ -14,7 +14,7 @@
 
 	export let data;
 
-	$: ({ avatarSrc } = data);
+	$: ({ avatarSrc, avatarFallback, userId } = data);
 
 	function drawerOpen(): void {
 		drawerStore.open();
@@ -23,8 +23,8 @@
 
 <Toast position="tr" />
 <Modal />
-<Drawer>
-	<Navigation />
+<Drawer bgDrawer="bg-primary-500">
+	<Navigation {userId} />
 </Drawer>
 
 <AppShell slotSidebarLeft="w-0 md:w-52 bg-primary-500">
@@ -37,13 +37,18 @@
 				<strong class="text-xl uppercase">Palestrina</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<Avatar bind:src={avatarSrc} initials="JD" width="w-10" background="bg-primary-500" />
+				<Avatar
+					src={avatarSrc}
+					initials={avatarFallback}
+					width="w-10"
+					background="bg-primary-500"
+				/>
 				<LightSwitch bgDark="bg-primary-700" bgLight="bg-primary-200" />
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<Navigation />
+		<Navigation {userId} />
 	</svelte:fragment>
 	<div class="container p-10 mx-auto"><slot /></div>
 </AppShell>
