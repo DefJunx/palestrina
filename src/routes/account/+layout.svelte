@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Navigation from '$src/lib/components/Navigation.svelte';
 	import {
 		AppBar,
@@ -8,16 +9,28 @@
 		LightSwitch,
 		Modal,
 		Toast,
-		drawerStore
+		drawerStore,
+		popup,
+		type PopupSettings
 	} from '@skeletonlabs/skeleton';
-	import { Menu } from 'lucide-svelte';
+	import { LogOut, Mail, Menu } from 'lucide-svelte';
 
 	export let data;
 
-	$: ({ avatarSrc, avatarFallback, userId } = data);
+	$: ({ avatarSrc, avatarFallback, userId, supabase } = data);
 
 	function drawerOpen(): void {
 		drawerStore.open();
+	}
+
+	const userPopup: PopupSettings = { event: 'click', target: 'userPopup', placement: 'bottom' };
+
+	function goToMessages() {
+		goto('/account/messages');
+	}
+
+	async function logout() {
+		await supabase.auth.signOut();
 	}
 </script>
 
@@ -26,6 +39,11 @@
 <Drawer bgDrawer="bg-primary-500">
 	<Navigation {userId} />
 </Drawer>
+
+<div class="card p-4 w-72 shadow-xl !z-[999]" data-popup="userPopup">
+	<div><p>Demo Content</p></div>
+	<div class="arrow bg-surface-100-800-token" />
+</div>
 
 <AppShell slotSidebarLeft="w-0 md:w-52 bg-primary-500">
 	<svelte:fragment slot="header">
@@ -37,13 +55,23 @@
 				<strong class="text-xl uppercase">Palestrina</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<Avatar
-					src={avatarSrc}
-					initials={avatarFallback}
-					width="w-10"
-					background="bg-primary-500"
-				/>
-				<LightSwitch bgDark="bg-primary-700" bgLight="bg-primary-200" />
+				<button class="block md:hidden btn-icon" on:click={goToMessages}>
+					<Mail />
+				</button>
+				<button class="block md:hidden btn-icon" on:click={logout}>
+					<LogOut class="block" />
+				</button>
+				<button type="button" class="hidden md:block btn-icon" use:popup={userPopup}>
+					<Avatar
+						class="hidden md:block"
+						src={avatarSrc}
+						initials={avatarFallback}
+						width="w-10"
+						background="bg-primary-500"
+					/>
+				</button>
+				<button />
+				<LightSwitch class="hidden md:block" bgDark="bg-primary-700" bgLight="bg-primary-200" />
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>

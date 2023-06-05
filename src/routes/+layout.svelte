@@ -7,7 +7,11 @@
 	import '../app.postcss';
 
 	import { invalidate } from '$app/navigation';
+	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	export let data;
 

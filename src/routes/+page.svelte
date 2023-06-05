@@ -6,8 +6,9 @@
 </script>
 
 <div class="flex h-screen items-center justify-center">
-	<div class="flex w-full flex-col gap-y-8 md:max-w-3xl">
+	<div class="flex p-4 flex-col gap-y-8 mx-auto container">
 		<h1 class="text-center text-2xl">Palestrina</h1>
+		<!-- TODO: Refactor with custom form -->
 		<Auth
 			additionalData={{}}
 			supabaseClient={data.supabase}

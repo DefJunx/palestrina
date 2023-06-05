@@ -54,11 +54,9 @@
 			{#if data.userProfile.fitness_notes}
 				<div>
 					<h2 class="text-lg font-semibold">Note</h2>
-					<div
-						class="mt-2 prose break-words p-2 border border-primary min-w-full"
-						bind:innerHTML={data.userProfile.fitness_notes}
-						contenteditable="false"
-					/>
+					<div class="mt-2 prose break-words p-2 border border-primary min-w-full">
+						{@html data.userProfile.fitness_notes}
+					</div>
 				</div>
 			{/if}
 			<div class="mt-4">

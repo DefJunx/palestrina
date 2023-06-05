@@ -5,7 +5,7 @@
 	import TipTap from '$src/lib/components/TipTap.svelte';
 
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { Minus } from 'lucide-svelte';
+	import { AlertTriangle, Minus } from 'lucide-svelte';
 
 	export let data;
 	export let form;
@@ -46,6 +46,10 @@
 <form method="post" class=" w-full mt-8" use:enhance={handleSubmit}>
 	{#if form?.error}
 		<div class="mb-8">
+			<div class="alert variant-filled-error">
+				<AlertTriangle />
+				<div class="alert-message">{form?.errorMessage ?? 'Si è verificato un errore'}</div>
+			</div>
 			<!-- <ErrorAlert description={form?.errorMessage ?? 'Si è verificato un errore'} /> -->
 		</div>
 	{/if}
@@ -76,7 +80,7 @@
 		>
 	</div>
 
-	<div class="mt-4 p-8 border border-primary">
+	<div class="my-4 p-8 border border-primary">
 		<TipTap bind:content={notes} />
 		<input type="hidden" name="fitness_notes" value={notes} />
 	</div>
