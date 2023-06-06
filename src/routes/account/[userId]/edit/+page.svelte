@@ -38,9 +38,9 @@
 
 <h1 class="w-full text-xl">
 	{#if $page.url.searchParams.has('new')}
-		Benvenuto su palestrina. Per favore, compila la seguente form con i tuoi dati per procedere.
+		Benvenuto su Palestrina! Per favore, compila la seguente form con i tuoi dati per procedere.
 	{:else}
-		Modifica il tuo profilo
+		Modifica il tuo profilo.
 	{/if}
 </h1>
 
@@ -79,7 +79,12 @@
 	<div class="flex flex-col">
 		<label class="label" for="full_name">Avatar</label>
 		<div class="mt-4 flex items-center gap-x-4">
-			<Avatar src={avatarSrc} alt={$form.username ?? ''} fallback={avatarFallback} />
+			<Avatar
+				src={avatarSrc}
+				alt={$form.username ?? ''}
+				initials={avatarFallback !== '' ? avatarFallback : 'NU'}
+				fallback={avatarFallback}
+			/>
 			<input
 				class="input"
 				disabled={loading}
