@@ -1,12 +1,24 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { forgotPasswordSchema, loginSchema, registerSchema } from './validation.schema.js';
 
-export async function load({ url, locals: { getSession } }) {
+export async function load({ url, locals: { getSession, supabase } }) {
 	const session = await getSession();
 
 	if (session) {
 		throw redirect(303, '/account');
+	}
+
+	const code = url.searchParams.get('code') ?? '';
+
+	if (code) {
+		const { error: authError } = await supabase.auth.exchangeCodeForSession(code);
+
+		if (authError) {
+			throw error(500, authError.message);
+		}
+
+		throw redirect(307, '/account');
 	}
 
 	const loginForm = await superValidate(loginSchema, { id: 'loginForm' });

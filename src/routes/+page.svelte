@@ -66,7 +66,7 @@
 <div class="mt-8 flex p-4 flex-col gap-y-8 mx-auto container">
 	<h1 class="text-center text-2xl">Palestrina</h1>
 	{#if formView === 'login'}
-		<p class="text-center text-lg">Inserisci le tue credenziali per continuare</p>
+		<p class="text-center text-lg">Inserisci le tue credenziali per continuare.</p>
 		{#if $page.status >= 400 && $loginMessage}
 			<div class="alert variant-filled-error">
 				<AlertTriangle />
