@@ -10,7 +10,7 @@ export async function load({ url, locals: { supabase } }) {
 		throw redirect(302, '/');
 	}
 
-	const { data, error: authError } = await supabase.auth.exchangeCodeForSession(code);
+	const { error: authError } = await supabase.auth.exchangeCodeForSession(code);
 
 	if (authError) {
 		throw error(500, authError.message);
