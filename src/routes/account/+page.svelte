@@ -37,11 +37,11 @@
 	<section class="mt-4">
 		<h2 class="text-xl font-bold">Parametri fitness</h2>
 		<div class="border-primary mt-4 rounded-lg border p-8">
-			{#if data.userProfile.fitness_data}
-				{#each Object.entries(data.userProfile.fitness_data) as [title, value]}
+			{#if data.fitnessData.length}
+				{#each data.fitnessData as param}
 					<div>
-						<strong>{title}</strong>
-						<span>{value}</span>
+						<strong>{param.label}:</strong>
+						<span>{param.value}</span>
 					</div>
 				{/each}
 			{:else}

@@ -1,6 +1,7 @@
-import type { Json } from '$src/types/database.types.js';
-import { error, fail } from '@sveltejs/kit';
-import { z } from 'zod';
+import type { FitnessDataType } from '$src/types/database.models.js';
+import { error, fail, redirect } from '@sveltejs/kit';
+import { message, superValidate } from 'sveltekit-superforms/server';
+import { validationSchema } from './validation.schema.js';
 
 export async function load({ locals, params: { userId } }) {
 	const userProfile = await locals.getProfile(userId);
@@ -9,40 +10,38 @@ export async function load({ locals, params: { userId } }) {
 		throw error(500, { message: 'Internal server error' });
 	}
 
-	const notesContent = userProfile.fitness_notes ?? '';
+	const form = await superValidate(
+		{
+			fitnessNotes: userProfile.fitness_notes ?? '',
+			fitnessData: (userProfile.fitness_data as FitnessDataType[]) ?? []
+		},
+		validationSchema
+	);
 
-	return { userProfile, notesContent };
+	return { form };
 }
 
 export const actions = {
 	default: async ({ locals: { supabase }, params, request }) => {
-		const payload = Object.fromEntries(await request.formData());
-		const { fitness_notes, ...fitness_data } = payload;
-		const validationSchema = z.record(z.string().nonempty(), z.string().nonempty());
-		const validationResult = validationSchema.safeParse(fitness_data);
+		const form = await superValidate(request, validationSchema);
 
-		if (!validationResult.success) {
-			return fail(400, {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				fitnessData: fitness_data as Record<string, any>,
-				error: true,
-				errorMessage: 'Si prega di compilare tutti i campi'
-			});
+		console.log(form);
+
+		if (!form.valid) {
+			return fail(400, { form });
 		}
 
 		const { error: supabaseUpdateError } = await supabase
 			.from('profiles')
 			.update({
-				fitness_data: fitness_data as Json,
+				fitness_data: form.data.fitnessData,
 				updated_at: new Date().toISOString(),
-				fitness_notes: fitness_notes as string
+				fitness_notes: form.data.fitnessNotes as string
 			})
 			.eq('id', params.userId);
 
-		if (supabaseUpdateError) {
-			throw error(500, { message: `Internal server error: ${supabaseUpdateError.message}` });
-		}
+		if (supabaseUpdateError) return message(form, supabaseUpdateError.message, { status: 500 });
 
-		return { success: true };
+		throw redirect(302, '/account');
 	}
 };
