@@ -5,7 +5,7 @@ export const validationSchema = z.object({
 		.string({ required_error: 'Questo campo è obbligatorio' })
 		.min(3, 'Il tuo username deve avere almeno 3 caratteri'),
 
-	full_name: z
+	fullName: z
 		.string({ required_error: 'Questo campo è obbligatorio' })
 		.nonempty({ message: 'Per favore compila questo campo' })
 });

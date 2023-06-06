@@ -6,12 +6,11 @@ export async function load(event) {
 	event.depends('update:profile');
 
 	const session = await event.locals.getSession();
-	const user = await event.locals.getUser();
 
-	if (!session || !user) throw redirect(302, handleLoginRedirect(event));
+	if (!session) throw redirect(302, handleLoginRedirect(event));
 
-	const userProfile = await event.locals.getProfile(user.id);
-	const fitnessData = (userProfile?.fitness_data as FitnessDataType[]) ?? [];
+	const userProfile = await event.locals.getProfile(session.user.id);
+	const fitnessData = (userProfile?.fitnessData as FitnessDataType[]) ?? [];
 
 	if (!userProfile) {
 		throw error(500, 'Profile does not exist');
@@ -20,10 +19,10 @@ export async function load(event) {
 	return {
 		userProfile,
 		fitnessData,
-		userId: user.id,
-		avatarSrc: userProfile.avatar_path
-			? getAvatarUrl(event.locals.supabase, userProfile.avatar_path)
+		userId: session.user.id,
+		avatarSrc: userProfile.avatarPath
+			? getAvatarUrl(event.locals.supabase, userProfile.avatarPath)
 			: '',
-		avatarFallback: userProfile.full_name ? getAvatarFallbackfromName(userProfile.full_name) : ''
+		avatarFallback: userProfile.fullName ? getAvatarFallbackfromName(userProfile.fullName) : ''
 	};
 }

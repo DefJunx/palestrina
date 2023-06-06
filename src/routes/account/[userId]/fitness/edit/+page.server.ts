@@ -12,8 +12,8 @@ export async function load({ locals, params: { userId } }) {
 
 	const form = await superValidate(
 		{
-			fitnessNotes: userProfile.fitness_notes ?? '',
-			fitnessData: (userProfile.fitness_data as FitnessDataType[]) ?? []
+			fitnessNotes: userProfile.fitnessNotes ?? '',
+			fitnessData: (userProfile.fitnessData as FitnessDataType[]) ?? []
 		},
 		validationSchema
 	);
@@ -22,24 +22,25 @@ export async function load({ locals, params: { userId } }) {
 }
 
 export const actions = {
-	default: async ({ locals: { supabase }, params, request }) => {
+	default: async ({ locals: { prisma }, params, request }) => {
 		const form = await superValidate(request, validationSchema);
 
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		const { error: supabaseUpdateError } = await supabase
-			.from('profiles')
-			.update({
-				fitness_data: form.data.fitnessData,
-				updated_at: new Date().toISOString(),
-				fitness_notes: form.data.fitnessNotes as string
-			})
-			.eq('id', params.userId);
-
-		if (supabaseUpdateError) return message(form, supabaseUpdateError.message, { status: 500 });
-
-		throw redirect(302, '/account');
+		try {
+			const { fitnessData, fitnessNotes } = form.data;
+			await prisma.profile.update({
+				where: { id: params.userId },
+				data: {
+					fitnessData,
+					fitnessNotes
+				}
+			});
+			throw redirect(302, '/account');
+		} catch (e) {
+			return message(form, 'unexpected error', { status: 500 });
+		}
 	}
 };

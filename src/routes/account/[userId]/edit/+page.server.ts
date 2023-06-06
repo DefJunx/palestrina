@@ -1,9 +1,9 @@
 import { invalidate } from '$app/navigation';
-import { error, fail, redirect } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema';
 
-export async function load({ url, locals: { getProfile, supabase }, params }) {
+export async function load({ url, locals: { getProfile }, params }) {
 	let form: Awaited<ReturnType<typeof superValidate>>;
 	const userProfile = await getProfile(params.userId);
 	if (!userProfile) {
@@ -14,7 +14,7 @@ export async function load({ url, locals: { getProfile, supabase }, params }) {
 		form = await superValidate(
 			{
 				username: userProfile.username ?? '',
-				full_name: userProfile.full_name ?? ''
+				fullName: userProfile.fullName ?? ''
 			},
 			validationSchema
 		);
@@ -22,11 +22,11 @@ export async function load({ url, locals: { getProfile, supabase }, params }) {
 		form = await superValidate(validationSchema);
 	}
 
-	return { form, avatarPath: userProfile.avatar_path };
+	return { form, avatarPath: userProfile.avatarPath };
 }
 
 export const actions = {
-	default: async ({ request, params, locals: { supabase } }) => {
+	default: async ({ request, params, locals: { supabase, prisma } }) => {
 		const formData = await request.formData();
 		const form = await superValidate(formData, validationSchema);
 		let avatar_path: string = formData.get('originalPath') as string;
@@ -61,27 +61,26 @@ export const actions = {
 		}
 
 		const {
-			data: { full_name, username }
+			data: { fullName, username }
 		} = form;
 
-		const { count, error } = await supabase.from('profiles').upsert({
-			id: params.userId,
-			has_compiled: true,
-			full_name,
-			username,
-			avatar_path,
-			updated_at: new Date().toISOString()
-		});
+		try {
+			await prisma.profile.update({
+				where: { id: params.userId },
+				data: {
+					hasCompiled: true,
+					fullName,
+					username,
+					avatarPath: avatar_path
+				}
+			});
+			await invalidate('update:profile');
 
-		if (error) {
-			return fail(500, { form });
+			return { form };
+		} catch (e) {
+			if (e) {
+				return fail(500, { form });
+			}
 		}
-
-		if (count !== 0) {
-			throw redirect(302, '/account');
-		}
-
-		await invalidate('update:profile');
-		return { form };
 	}
 };

@@ -1,6 +1,7 @@
 // src/hooks.server.ts
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
+import { prismaClient } from './lib/prisma';
 import type { Database } from './types/database.types';
 
 export async function handle({ event, resolve }) {
@@ -9,6 +10,7 @@ export async function handle({ event, resolve }) {
 		supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
 		event
 	});
+	event.locals.prisma = prismaClient;
 
 	event.locals.getSession = async () => {
 		const {
@@ -16,21 +18,11 @@ export async function handle({ event, resolve }) {
 		} = await event.locals.supabase.auth.getSession();
 		return session;
 	};
-	event.locals.getUser = async () => {
-		const {
-			data: { user }
-		} = await event.locals.supabase.auth.getUser();
-		return user;
-	};
 
 	event.locals.getProfile = async (userId: string) => {
-		const { data: userProfile, error: userProfileError } = await event.locals.supabase
-			.from('profiles')
-			.select('*')
-			.eq('id', userId)
-			.single();
+		const userProfile = await event.locals.prisma.profile.findUnique({ where: { id: userId } });
 
-		if (userProfileError) return null;
+		if (!userProfile) return null;
 
 		return userProfile;
 	};

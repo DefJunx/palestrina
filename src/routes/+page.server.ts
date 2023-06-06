@@ -59,6 +59,8 @@ export const actions = {
 
 		const { error: registerError } = await supabase.auth.signUp({ email, password });
 
+		console.log(registerError);
+
 		if (registerError) {
 			return message(registerForm, registerError.message, { status: 400 });
 		}

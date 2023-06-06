@@ -1,4 +1,4 @@
-import type { Profile } from '$src/types/database.models';
+import type { Profile } from '@prisma/client';
 import { writable } from 'svelte/store';
 
 type User = {

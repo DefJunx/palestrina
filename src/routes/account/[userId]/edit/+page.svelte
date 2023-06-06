@@ -62,7 +62,7 @@
 			disabled={loading}
 			type="text"
 			name="full_name"
-			bind:value={$form.full_name}
+			bind:value={$form.fullName}
 		/>
 		{#if $errors.full_name}
 			<small class="font-semibold text-red-400">{$errors.full_name}</small>

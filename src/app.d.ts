@@ -1,5 +1,5 @@
-import { Session, SupabaseClient, type User } from '@supabase/supabase-js';
-import type { Profile } from './types/database.models';
+import type { PrismaClient, Profile } from '@prisma/client';
+import { Session, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from './types/database.types';
 
 declare global {
@@ -7,8 +7,8 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			supabase: SupabaseClient<Database>;
+			prisma: PrismaClient;
 			getSession(): Promise<Session | null>;
-			getUser(): Promise<User | null>;
 			getProfile(userId: string): Promise<Profile | null>;
 		}
 		interface PageData {

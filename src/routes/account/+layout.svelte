@@ -42,7 +42,17 @@
 </Drawer>
 
 <div class="card !z-[999] w-72 p-4 shadow-xl" data-popup="userPopup">
-	<div><p>Demo Content</p></div>
+	<div class="flex flex-col gap-y-2">
+		<button class="flex flex-row items-center gap-x-2" on:click={goToMessages}>
+			<Mail class="block" />
+			<span>Messaggi</span>
+		</button>
+		<hr />
+		<button class="flex flex-row items-center gap-x-2" on:click={logout}>
+			<LogOut class="block" />
+			<span>Logout</span>
+		</button>
+	</div>
 	<div class="arrow bg-surface-100-800-token" />
 </div>
 
