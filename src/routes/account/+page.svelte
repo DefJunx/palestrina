@@ -22,9 +22,9 @@
 	}
 </script>
 
-<div class="w-full md:max-w-5xl md:mx-auto">
-	<section class="p-8 border border-primary rounded-lg">
-		<div class="flex gap-x-8 items-center">
+<div class="w-full md:mx-auto md:max-w-5xl">
+	<section class="border-primary rounded-lg border p-8">
+		<div class="flex items-center gap-x-8">
 			<Avatar class="w-32" {src} alt={data.userProfile.username ?? ''} {fallback} />
 			<div class="flex flex-col">
 				<span>Nome: {data.userProfile.full_name}</span>
@@ -39,7 +39,7 @@
 	</section>
 	<section class="mt-4">
 		<h2 class="text-xl font-bold">Parametri fitness</h2>
-		<div class="p-8 border border-primary rounded-lg mt-4">
+		<div class="border-primary mt-4 rounded-lg border p-8">
 			{#if data.userProfile.fitness_data}
 				{#each Object.entries(data.userProfile.fitness_data) as [title, value]}
 					<div>
@@ -50,11 +50,11 @@
 			{:else}
 				<div>Non ci sono dati</div>
 			{/if}
-			<hr class="text-primary my-4 border-primary" />
+			<hr class="text-primary border-primary my-4" />
 			{#if data.userProfile.fitness_notes}
 				<div>
 					<h2 class="text-lg font-semibold">Note</h2>
-					<div class="mt-2 prose break-words p-2 border border-primary min-w-full">
+					<div class="border-primary prose mt-2 min-w-full break-words border p-2">
 						{@html data.userProfile.fitness_notes}
 					</div>
 				</div>

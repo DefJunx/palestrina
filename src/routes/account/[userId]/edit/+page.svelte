@@ -46,7 +46,7 @@
 
 <form
 	method="post"
-	class="flex w-full flex-col space-y-8 mt-8"
+	class="mt-8 flex w-full flex-col space-y-8"
 	use:enhance
 	enctype="multipart/form-data"
 >
@@ -66,7 +66,7 @@
 	<div class="flex flex-col">
 		<label class="label" for="full_name">Nome</label>
 		<input
-			class="mt-1 input"
+			class="input mt-1"
 			disabled={loading}
 			type="text"
 			name="full_name"

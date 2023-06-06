@@ -13,7 +13,7 @@
 		href === $page.url.pathname ? '!bg-secondary-500 !text-white' : '';
 </script>
 
-<a {href} class="text-black flex items-center {classesActive(href)}" on:click={drawerClose}>
+<a {href} class="flex items-center text-black {classesActive(href)}" on:click={drawerClose}>
 	<slot name="icon" />
 	<span>{label}</span>
 </a>

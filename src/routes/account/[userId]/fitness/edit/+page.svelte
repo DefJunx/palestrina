@@ -43,17 +43,17 @@
 
 <h1 class="w-full text-xl">Modifica parametri atleta</h1>
 
-<form method="post" class=" w-full mt-8" use:enhance={handleSubmit}>
+<form method="post" class=" mt-8 w-full" use:enhance={handleSubmit}>
 	{#if form?.error}
 		<div class="mb-8">
-			<div class="alert variant-filled-error">
+			<div class="variant-filled-error alert">
 				<AlertTriangle />
 				<div class="alert-message">{form?.errorMessage ?? 'Si è verificato un errore'}</div>
 			</div>
 			<!-- <ErrorAlert description={form?.errorMessage ?? 'Si è verificato un errore'} /> -->
 		</div>
 	{/if}
-	<div class="p-8 border border-primary space-y-8 flex-col flex">
+	<div class="border-primary flex flex-col space-y-8 border p-8">
 		{#each fitnessData as [name, value], i}
 			<div class="flex items-center gap-x-4">
 				<div>
@@ -80,7 +80,7 @@
 		>
 	</div>
 
-	<div class="my-4 p-8 border border-primary">
+	<div class="border-primary my-4 border p-8">
 		<TipTap bind:content={notes} />
 		<input type="hidden" name="fitness_notes" value={notes} />
 	</div>

@@ -36,7 +36,7 @@
 </script>
 
 {#if editor}
-	<div class="flex gap-x-2 items-center">
+	<div class="flex items-center gap-x-2">
 		<button
 			class="btn btn-sm {editor.isActive('heading', { level: 1 })
 				? 'variant-filled-primary'

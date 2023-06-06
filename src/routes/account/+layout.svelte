@@ -38,7 +38,7 @@
 	<Navigation {userId} />
 </Drawer>
 
-<div class="card p-4 w-72 shadow-xl !z-[999]" data-popup="userPopup">
+<div class="card !z-[999] w-72 p-4 shadow-xl" data-popup="userPopup">
 	<div><p>Demo Content</p></div>
 	<div class="arrow bg-surface-100-800-token" />
 </div>
@@ -47,19 +47,19 @@
 	<svelte:fragment slot="header">
 		<AppBar shadow="shadow-lg" background="bg-primary-500">
 			<svelte:fragment slot="lead">
-				<button class="md:hidden btn btn-sm mr-4" on:click={drawerOpen}>
+				<button class="btn btn-sm mr-4 md:hidden" on:click={drawerOpen}>
 					<Menu />
 				</button>
 				<strong class="text-xl uppercase">Palestrina</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<button class="block md:hidden btn-icon" on:click={goToMessages}>
+				<button class="btn-icon block md:hidden" on:click={goToMessages}>
 					<Mail />
 				</button>
-				<button class="block md:hidden btn-icon" on:click={logout}>
+				<button class="btn-icon block md:hidden" on:click={logout}>
 					<LogOut class="block" />
 				</button>
-				<button type="button" class="hidden md:block btn-icon" use:popup={userPopup}>
+				<button type="button" class="btn-icon hidden md:block" use:popup={userPopup}>
 					<Avatar
 						class="hidden md:block"
 						src={avatarSrc}
@@ -76,5 +76,5 @@
 	<svelte:fragment slot="sidebarLeft">
 		<Navigation {userId} />
 	</svelte:fragment>
-	<div class="container p-10 mx-auto"><slot /></div>
+	<div class="container mx-auto p-10"><slot /></div>
 </AppShell>

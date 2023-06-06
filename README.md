@@ -8,7 +8,7 @@ TBD
 
 ## Tech Stack
 
-- Sveltekit 
+- Sveltekit
 - Supabase
 - Tailwind
 - Skeleton UI

@@ -29,7 +29,7 @@
 			</NavigationItem>
 		</li>
 	</ul>
-	<h2 class="mt-8 text-center underline text-black text-lg">Gestione</h2>
+	<h2 class="mt-8 text-center text-lg text-black underline">Gestione</h2>
 	<ul class="mt-4">
 		<li>
 			<NavigationItem href="/account/users" label="Utenti">

@@ -8,10 +8,10 @@
 	const { errors, constraints, enhance, message } = superForm(data.form);
 </script>
 
-<form method="post" use:enhance class="mt-8 mx-auto container space-y-6">
+<form method="post" use:enhance class="container mx-auto mt-8 space-y-6">
 	<p class="text-center text-lg">Imposta una nuova password per il tuo account</p>
 	{#if $page.status >= 400 && $message}
-		<div class="alert variant-filled-error">
+		<div class="variant-filled-error alert">
 			<AlertTriangle />
 			<span class="alert-message">{$message}</span>
 		</div>
