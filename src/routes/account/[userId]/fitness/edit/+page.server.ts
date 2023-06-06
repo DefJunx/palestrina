@@ -25,8 +25,6 @@ export const actions = {
 	default: async ({ locals: { supabase }, params, request }) => {
 		const form = await superValidate(request, validationSchema);
 
-		console.log(form);
-
 		if (!form.valid) {
 			return fail(400, { form });
 		}
