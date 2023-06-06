@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { userStore } from '$src/lib/stores.js';
 	import { Avatar } from '@skeletonlabs/skeleton';
 
 	import { superForm } from 'sveltekit-superforms/client';
@@ -15,25 +16,16 @@
 		}
 	});
 
-	let avatarFallback = '';
-	let avatarSrc = data.avatarSrc;
 	let loading = false;
+	let previewSrc = '';
 
 	const previewAvatar = async (e: Event) => {
 		const inputElement = e.target as HTMLInputElement;
 		if (inputElement.files && inputElement.files.length !== 0) {
 			const avatar = inputElement.files[0];
-			avatarSrc = URL.createObjectURL(avatar);
+			previewSrc = URL.createObjectURL(avatar);
 		}
 	};
-
-	$: {
-		if ($form.full_name) {
-			const nameParts = $form.full_name.split(' ');
-			const initials = nameParts.map((part: string) => part.charAt(0).toUpperCase());
-			avatarFallback = initials.join('');
-		}
-	}
 </script>
 
 <h1 class="w-full text-xl">
@@ -80,10 +72,10 @@
 		<label class="label" for="full_name">Avatar</label>
 		<div class="mt-4 flex items-center gap-x-4">
 			<Avatar
-				src={avatarSrc}
+				src={previewSrc !== '' ? previewSrc : $userStore.avatarSrc}
 				alt={$form.username ?? ''}
-				initials={avatarFallback !== '' ? avatarFallback : 'NU'}
-				fallback={avatarFallback}
+				initials={$userStore.avatarInitials}
+				fallback="/images/user_placeholder.png"
 			/>
 			<input
 				class="input"

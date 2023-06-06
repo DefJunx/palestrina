@@ -1,21 +1,16 @@
 import { invalidate } from '$app/navigation';
-import { getAvatarUrl } from '$src/lib/utils';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema';
 
 export async function load({ url, locals: { getProfile, supabase }, params }) {
-	let avatarPath = '';
 	let form: Awaited<ReturnType<typeof superValidate>>;
-	let avatarSrc = '';
+	const userProfile = await getProfile(params.userId);
+	if (!userProfile) {
+		throw error(500);
+	}
 
 	if (!url.searchParams.has('new')) {
-		const userProfile = await getProfile(params.userId);
-
-		if (!userProfile) {
-			throw error(500);
-		}
-
 		form = await superValidate(
 			{
 				username: userProfile.username ?? '',
@@ -23,17 +18,11 @@ export async function load({ url, locals: { getProfile, supabase }, params }) {
 			},
 			validationSchema
 		);
-
-		avatarPath = userProfile.avatar_path ?? '';
-
-		if (avatarPath !== '') {
-			avatarSrc = await getAvatarUrl(supabase, avatarPath);
-		}
 	} else {
 		form = await superValidate(validationSchema);
 	}
 
-	return { form, avatarSrc, avatarPath };
+	return { form, avatarPath: userProfile.avatar_path };
 }
 
 export const actions = {

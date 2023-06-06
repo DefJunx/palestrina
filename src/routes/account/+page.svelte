@@ -1,23 +1,14 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { getAvatarFallbackfromName } from '$src/lib/utils.js';
+	import { userStore } from '$src/lib/stores.js';
 	import { Avatar } from '@skeletonlabs/skeleton';
 
 	export let data;
 
-	let fallback = '';
-	let src = data.avatarSrc;
-
 	if (!data.userProfile.has_compiled) {
 		if (browser) {
 			goto(`/account/${data.userProfile.id}/edit?new=true`);
-		}
-	}
-
-	$: {
-		if (data.userProfile.full_name) {
-			fallback = getAvatarFallbackfromName(data.userProfile.full_name);
 		}
 	}
 </script>
@@ -25,7 +16,13 @@
 <div class="w-full md:mx-auto md:max-w-5xl">
 	<section class="border-primary rounded-lg border p-8">
 		<div class="flex items-center gap-x-8">
-			<Avatar class="w-32" {src} alt={data.userProfile.username ?? ''} {fallback} />
+			<Avatar
+				class="w-32"
+				src={$userStore.avatarSrc}
+				alt={data.userProfile.username ?? ''}
+				initials={$userStore.avatarInitials}
+				fallback="/images/user_placeholder.png"
+			/>
 			<div class="flex flex-col">
 				<span>Nome: {data.userProfile.full_name}</span>
 				<span>Username: {data.userProfile.username}</span>

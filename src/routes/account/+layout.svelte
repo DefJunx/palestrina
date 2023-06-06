@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Navigation from '$src/lib/components/Navigation.svelte';
+	import { userStore } from '$src/lib/stores.js';
 	import {
 		AppBar,
 		AppShell,
@@ -15,7 +16,9 @@
 
 	export let data;
 
-	$: ({ avatarSrc, avatarFallback, userId, supabase, session } = data);
+	$: ({ avatarSrc, avatarFallback, userId, supabase, session, userProfile } = data);
+
+	$: userStore.set({ profile: userProfile, avatarInitials: avatarFallback, avatarSrc });
 
 	$: if (!session) goto('/');
 
@@ -62,10 +65,10 @@
 				<button type="button" class="btn-icon hidden md:block" use:popup={userPopup}>
 					<Avatar
 						class="hidden md:block"
-						src={avatarSrc}
-						initials={avatarFallback}
+						src={$userStore.avatarSrc}
+						initials={$userStore.avatarInitials}
+						fallback="/images/user_placeholder.png"
 						width="w-10"
-						background="bg-primary-500"
 					/>
 				</button>
 				<button />

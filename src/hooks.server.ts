@@ -10,9 +10,6 @@ export async function handle({ event, resolve }) {
 		event
 	});
 
-	/**
-	 * A convenience helper so we can just call await getSession() instead const { data: { session } } = await supabase.auth.getSession()
-	 */
 	event.locals.getSession = async () => {
 		const {
 			data: { session }
