@@ -31,7 +31,7 @@
 	$: if (session && session.expires_at && browser) goto('/account');
 </script>
 
-<Toast position="tr" />
+<Toast position="t" />
 <Modal />
 
 <svelte:head>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ThemeSupa } from '@supabase/auth-ui-shared';
-	import { Auth } from '@supabase/auth-ui-svelte';
+	import { toastStore } from '@skeletonlabs/skeleton';
 	import { AlertTriangle } from 'lucide-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 
@@ -19,7 +18,7 @@
 		onSubmit() {
 			loading = true;
 		},
-		onResult({ result }) {
+		onResult() {
 			loading = false;
 		}
 	});
@@ -33,10 +32,35 @@
 		onSubmit() {
 			loading = true;
 		},
-		onResult({ result }) {
+		onResult() {
 			loading = false;
 		}
 	});
+
+	const {
+		errors: forgotPasswordErrors,
+		enhance: forgotPasswordEnhance,
+		message: forgotPasswordMessage
+	} = superForm(data.forgotPasswordForm, {
+		invalidateAll: false,
+		onSubmit() {
+			loading = true;
+		},
+		onResult() {
+			loading = false;
+		}
+	});
+
+	$: {
+		if ($page.status === 200) {
+			if ($registerMessage) {
+				toastStore.trigger({ message: $registerMessage });
+			}
+			if ($forgotPasswordMessage) {
+				toastStore.trigger({ message: $forgotPasswordMessage });
+			}
+		}
+	}
 </script>
 
 <div class="mt-8 flex p-4 flex-col gap-y-8 mx-auto container">
@@ -64,9 +88,23 @@
 				{/if}
 			</div>
 			<button disabled={loading} class="btn variant-filled-primary" type="submit">Login</button>
-			<button type="button" class="anchor cursor-pointer" on:click={(e) => (formView = 'register')}>
-				Non hai un account?
-			</button>
+			<hr class="divider border-t-2" />
+			<div class="flex flex-col justify-center">
+				<button
+					type="button"
+					class="anchor cursor-pointer"
+					on:click={(e) => (formView = 'register')}
+				>
+					Non hai un account?
+				</button>
+				<button
+					type="button"
+					class="anchor cursor-pointer"
+					on:click={(e) => (formView = 'forgotpsw')}
+				>
+					Password dimenticata?
+				</button>
+			</div>
 		</form>
 	{:else if formView === 'register'}
 		{#if $page.status >= 400 && $registerMessage}
@@ -92,34 +130,36 @@
 			</div>
 			<button disabled={loading} class="btn variant-filled-primary" type="submit">Registrati</button
 			>
+			<hr class="divider border-t-2" />
 			<button type="button" class="anchor cursor-pointer" on:click={(e) => (formView = 'login')}
 				>Hai già un account?</button
 			>
 		</form>
 	{:else}
-		forgotpsw
+		{#if $page.status >= 400 && $forgotPasswordMessage}
+			<div class="alert variant-filled-error">
+				<AlertTriangle />
+				<span class="alert-message">{$forgotPasswordMessage}</span>
+			</div>
+		{/if}
+		<form
+			action="?/forgotPassword"
+			method="post"
+			class="flex flex-col space-y-8"
+			use:forgotPasswordEnhance
+		>
+			<div>
+				<label class="label" for="email">Email</label>
+				<input disabled={loading} class="input" name="email" type="text" />
+				{#if $forgotPasswordErrors.email}
+					<small class="text-error-500">{$forgotPasswordErrors.email[0]}</small>
+				{/if}
+			</div>
+			<button disabled={loading} class="btn variant-filled-primary" type="submit">Invia</button>
+			<hr class="divider border-t-2" />
+			<button type="button" class="anchor cursor-pointer" on:click={(e) => (formView = 'login')}
+				>Hai già un account?</button
+			>
+		</form>
 	{/if}
-	<!-- TODO: Refactor with custom form -->
-	<div class="hidden">
-		<Auth
-			additionalData={{}}
-			supabaseClient={data.supabase}
-			appearance={{
-				theme: ThemeSupa,
-				variables: {
-					default: {
-						colors: {
-							brand: 'rgb(250 204 21)',
-							inputBorder: 'rgb(250 204 21)',
-							inputBorderFocus: 'rgb(59 130 246)',
-							brandAccent: 'rgb(250 204 21)',
-							anchorTextColor: 'rgb(250 204 21)',
-							anchorTextHoverColor: 'rgb(250 204 21)'
-						}
-					}
-				}
-			}}
-			redirectTo={`${data.url}/logging-in?redirect=/account`}
-		/>
-	</div>
 </div>

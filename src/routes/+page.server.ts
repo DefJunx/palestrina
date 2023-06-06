@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
-import { loginSchema, registerSchema } from './validation.schema.js';
+import { forgotPasswordSchema, loginSchema, registerSchema } from './validation.schema.js';
 
 export async function load({ url, locals: { getSession } }) {
 	const session = await getSession();
@@ -11,8 +11,11 @@ export async function load({ url, locals: { getSession } }) {
 
 	const loginForm = await superValidate(loginSchema, { id: 'loginForm' });
 	const registerForm = await superValidate(registerSchema, { id: 'registerForm' });
+	const forgotPasswordForm = await superValidate(forgotPasswordSchema, {
+		id: 'forgotPasswordForm'
+	});
 
-	return { url: url.origin, loginForm, registerForm };
+	return { url: url.origin, loginForm, registerForm, forgotPasswordForm };
 }
 
 export const actions = {
@@ -33,7 +36,7 @@ export const actions = {
 
 		throw redirect(303, url.searchParams.get('redirectTo') ?? '/account');
 	},
-	register: async ({ request, locals: { supabase }, url }) => {
+	register: async ({ request, locals: { supabase } }) => {
 		const registerForm = await superValidate(request, registerSchema, { id: 'registerForm' });
 
 		if (!registerForm.valid) return fail(400, { registerForm });
@@ -48,6 +51,25 @@ export const actions = {
 			return message(registerForm, registerError.message, { status: 400 });
 		}
 
-		// return
+		return message(registerForm, 'Controlla il tuo indirizzo email');
+	},
+	forgotPassword: async ({ request, locals: { supabase } }) => {
+		const forgotPasswordForm = await superValidate(request, forgotPasswordSchema, {
+			id: 'forgotPasswordForm'
+		});
+
+		if (!forgotPasswordForm.valid) return fail(400, { forgotPasswordForm });
+
+		const {
+			data: { email }
+		} = forgotPasswordForm;
+
+		const { error: forgotPasswordError } = await supabase.auth.resetPasswordForEmail(email);
+
+		if (forgotPasswordError) {
+			return message(forgotPasswordForm, forgotPasswordError.message, { status: 400 });
+		}
+
+		return message(forgotPasswordForm, 'Controlla il tuo indirizzo email');
 	}
 };
