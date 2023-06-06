@@ -66,6 +66,7 @@
 <div class="mt-8 flex p-4 flex-col gap-y-8 mx-auto container">
 	<h1 class="text-center text-2xl">Palestrina</h1>
 	{#if formView === 'login'}
+		<p class="text-center text-lg">Inserisci le tue credenziali per continuare</p>
 		{#if $page.status >= 400 && $loginMessage}
 			<div class="alert variant-filled-error">
 				<AlertTriangle />
@@ -107,6 +108,7 @@
 			</div>
 		</form>
 	{:else if formView === 'register'}
+		<p class="text-center text-lg">Crea un nuovo account inserendo email e password.</p>
 		{#if $page.status >= 400 && $registerMessage}
 			<div class="alert variant-filled-error">
 				<AlertTriangle />
@@ -136,6 +138,9 @@
 			>
 		</form>
 	{:else}
+		<p class="text-center text-lg">
+			Inserisci la tua email per ricevere un link per il reset della password. (Controlla lo spam!)
+		</p>
 		{#if $page.status >= 400 && $forgotPasswordMessage}
 			<div class="alert variant-filled-error">
 				<AlertTriangle />
