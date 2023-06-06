@@ -11,7 +11,7 @@
 
 	if (!data.userProfile.has_compiled) {
 		if (browser) {
-			goto(`/account/${data.userProfile.id}/profileEdit?new=true`);
+			goto(`/account/${data.userProfile.id}/edit?new=true`);
 		}
 	}
 

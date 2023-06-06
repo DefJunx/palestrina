@@ -6,8 +6,7 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 
-	import { browser } from '$app/environment';
-	import { goto, invalidate } from '$app/navigation';
+	import { invalidate } from '$app/navigation';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import { Modal, Toast, storePopup } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
@@ -27,8 +26,6 @@
 
 		return () => data.subscription.unsubscribe();
 	});
-
-	$: if (session && session.expires_at && browser) goto('/account');
 </script>
 
 <Toast position="t" />

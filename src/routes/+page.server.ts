@@ -53,7 +53,7 @@ export const actions = {
 
 		return message(registerForm, 'Controlla il tuo indirizzo email');
 	},
-	forgotPassword: async ({ request, locals: { supabase } }) => {
+	forgotPassword: async ({ request, locals: { supabase }, url }) => {
 		const forgotPasswordForm = await superValidate(request, forgotPasswordSchema, {
 			id: 'forgotPasswordForm'
 		});
@@ -64,7 +64,9 @@ export const actions = {
 			data: { email }
 		} = forgotPasswordForm;
 
-		const { error: forgotPasswordError } = await supabase.auth.resetPasswordForEmail(email);
+		const { error: forgotPasswordError } = await supabase.auth.resetPasswordForEmail(email, {
+			redirectTo: `${url.origin}/updatePassword`
+		});
 
 		if (forgotPasswordError) {
 			return message(forgotPasswordForm, forgotPasswordError.message, { status: 400 });

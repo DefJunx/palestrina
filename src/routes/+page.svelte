@@ -82,7 +82,7 @@
 			</div>
 			<div>
 				<label class="label" for="password">Password</label>
-				<input disabled={loading} class="input" name="password" type="text" />
+				<input disabled={loading} class="input" name="password" type="password" />
 				{#if $loginErrors.password}
 					<small class="text-error-500">{$loginErrors.password[0]}</small>
 				{/if}
@@ -123,7 +123,7 @@
 			</div>
 			<div>
 				<label class="label" for="password">Password</label>
-				<input disabled={loading} class="input" name="password" type="text" />
+				<input disabled={loading} class="input" name="password" type="password" />
 				{#if $registerErrors.password}
 					<small class="text-error-500">{$registerErrors.password[0]}</small>
 				{/if}
