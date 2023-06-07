@@ -21,7 +21,9 @@ export async function load({ url, locals: { getSession, supabase, prisma } }) {
 			throw error(500, authError?.message ?? 'Unexpected authentication error');
 		}
 
-		await prisma.profile.create({ data: { userId: user.id } });
+		const profile = await prisma.profile.create({ data: { userId: user.id } });
+
+		console.log('new profile', profile);
 
 		throw redirect(307, '/account');
 	}

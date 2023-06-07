@@ -7,13 +7,17 @@ export function handleLoginRedirect(event: RequestEvent) {
 	return `/?redirectTo=${redirectTo}`;
 }
 
-export function getAvatarFallbackfromName(fullName: string) {
+export function getAvatarFallbackfromName(fullName: string | null) {
+	if (!fullName) return '';
+
 	const nameParts = fullName.split(' ');
 	const initials = nameParts.map((part: string) => part.charAt(0).toUpperCase());
 	return initials.join('');
 }
 
-export async function getAvatarUrl(supabase: SupabaseClient, avatarPath: string) {
+export async function getAvatarUrl(supabase: SupabaseClient, avatarPath: string | null) {
+	if (!avatarPath) return '';
+
 	try {
 		const { data: avatarUrl } = await supabase.storage.from('avatars').getPublicUrl(avatarPath);
 		return avatarUrl.publicUrl;

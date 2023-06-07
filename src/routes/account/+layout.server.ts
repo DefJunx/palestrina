@@ -1,5 +1,4 @@
 import { getAvatarFallbackfromName, getAvatarUrl, handleLoginRedirect } from '$src/lib/utils.js';
-import type { FitnessDataType } from '$src/types/database.models.js';
 import { redirect } from '@sveltejs/kit';
 
 export async function load(event) {
@@ -9,16 +8,14 @@ export async function load(event) {
 
 	if (!session) throw redirect(302, handleLoginRedirect(event));
 
-	const userProfile = await event.locals.getProfile(session.user.id);
-	const fitnessData = (userProfile.fitnessData as FitnessDataType[]) ?? [];
+	const profile = await event.locals.getProfile(session.user.id);
+	const fitnessData = (profile.fitnessData as { label: string; value: string }[]) ?? [];
 
 	return {
-		userProfile,
+		profile,
 		fitnessData,
 		userId: session.user.id,
-		avatarSrc: userProfile.avatarPath
-			? getAvatarUrl(event.locals.supabase, userProfile.avatarPath)
-			: '',
-		avatarFallback: userProfile.fullName ? getAvatarFallbackfromName(userProfile.fullName) : ''
+		avatarSrc: getAvatarUrl(event.locals.supabase, profile.avatarPath),
+		avatarFallback: getAvatarFallbackfromName(profile.fullName)
 	};
 }

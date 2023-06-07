@@ -13,7 +13,7 @@
 		onSubmit() {
 			loading = true;
 		},
-		onResult() {
+		onResult({ result }) {
 			loading = false;
 		}
 	});

@@ -20,8 +20,8 @@ export async function handle({ event, resolve }) {
 	};
 
 	event.locals.getProfile = (userId: string) =>
-		event.locals.prisma.profile.findUniqueOrThrow({
-			where: { id: userId }
+		event.locals.prisma.profile.findFirstOrThrow({
+			where: { userId }
 		});
 
 	return resolve(event, {

@@ -1,5 +1,4 @@
-import { invalidate } from '$app/navigation';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema';
 
@@ -23,8 +22,6 @@ export const actions = {
 	default: async ({ request, params, locals: { supabase, prisma } }) => {
 		const formData = await request.formData();
 
-		console.log(formData);
-
 		const form = await superValidate(formData, validationSchema);
 		let avatar_path: string = formData.get('originalPath') as string;
 
@@ -32,8 +29,6 @@ export const actions = {
 			// Again, always return { form } and things will just work.
 			return fail(400, { form });
 		}
-
-		console.log(form);
 
 		const avatar = formData.get('avatar');
 
@@ -65,7 +60,7 @@ export const actions = {
 
 		try {
 			await prisma.profile.update({
-				where: { id: params.userId },
+				where: { userId: params.userId },
 				data: {
 					hasCompiled: true,
 					fullName,
@@ -73,13 +68,14 @@ export const actions = {
 					avatarPath: avatar_path
 				}
 			});
-			await invalidate('update:profile');
-
-			return { form };
 		} catch (e) {
 			if (e) {
+				console.log('error', e);
+
 				return fail(500, { form });
 			}
 		}
+
+		throw redirect(302, '/account?profileUpdated=true');
 	}
 };

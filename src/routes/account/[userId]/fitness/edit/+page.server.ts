@@ -1,15 +1,14 @@
-import type { FitnessDataType } from '$src/types/database.models.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema.js';
 
-export async function load({ locals, params: { userId } }) {
-	const userProfile = await locals.getProfile(userId);
+export async function load({ parent }) {
+	const userProfile = (await parent()).profile;
 
 	const form = await superValidate(
 		{
 			fitnessNotes: userProfile.fitnessNotes ?? '',
-			fitnessData: (userProfile.fitnessData as FitnessDataType[]) ?? []
+			fitnessData: (userProfile.fitnessData as { label: string; value: string }[]) ?? []
 		},
 		validationSchema
 	);
@@ -28,15 +27,18 @@ export const actions = {
 		try {
 			const { fitnessData, fitnessNotes } = form.data;
 			await prisma.profile.update({
-				where: { id: params.userId },
+				where: { userId: params.userId },
 				data: {
 					fitnessData,
 					fitnessNotes
 				}
 			});
-			throw redirect(302, '/account');
 		} catch (e) {
+			console.log(e);
+
 			return message(form, 'unexpected error', { status: 500 });
 		}
+
+		throw redirect(302, '/account?profileUpdated=true');
 	}
 };

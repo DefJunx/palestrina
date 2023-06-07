@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
-	import { userStore } from '$src/lib/stores.js';
+	import { goto, invalidate } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { userStore } from '$src/lib/stores';
 	import { Avatar } from '@skeletonlabs/skeleton';
 
 	export let data;
 
-	if (!data.userProfile.hasCompiled) {
+	if (!data.profile.hasCompiled) {
 		if (browser) {
-			goto(`/account/${data.userProfile.id}/edit?new=true`);
+			goto(`/account/${data.userId}/edit?new=true`);
 		}
 	}
+
+	$: if ($page.url.searchParams.get('profileUpdated') && browser) invalidate('update:profile');
 </script>
 
 <div class="w-full md:mx-auto md:max-w-5xl">
@@ -19,17 +22,17 @@
 			<Avatar
 				class="w-32"
 				src={$userStore.avatarSrc}
-				alt={data.userProfile.username ?? ''}
+				alt={data.userId ?? ''}
 				initials={$userStore.avatarInitials}
 				fallback="/images/user_placeholder.png"
 			/>
 			<div class="flex flex-col">
-				<span>Nome: {data.userProfile.fullName}</span>
-				<span>Username: {data.userProfile.username}</span>
+				<span>Nome: {data.profile.fullName}</span>
+				<span>Username: {data.profile.username}</span>
 			</div>
 		</div>
 		<div class="mt-8">
-			<a class="btn variant-filled-primary" href={`/account/${data.userProfile.id}/edit`}
+			<a class="btn variant-filled-primary" href={`/account/${data.userId}/edit`}
 				>Modifica il profilo</a
 			>
 		</div>
@@ -48,16 +51,16 @@
 				<div>Non ci sono dati</div>
 			{/if}
 			<hr class="text-primary border-primary my-4" />
-			{#if data.userProfile.fitnessNotes}
+			{#if data.profile.fitnessNotes}
 				<div>
 					<h2 class="text-lg font-semibold">Note</h2>
 					<div class="border-primary prose mt-2 min-w-full break-words border p-2">
-						{@html data.userProfile.fitnessNotes}
+						{@html data.profile.fitnessNotes}
 					</div>
 				</div>
 			{/if}
 			<div class="mt-4">
-				<a class="btn variant-filled-primary" href={`/account/${data.userProfile.id}/fitness/edit`}
+				<a class="btn variant-filled-primary" href={`/account/${data.userId}/fitness/edit`}
 					>Modifica dati atleta</a
 				>
 			</div>
