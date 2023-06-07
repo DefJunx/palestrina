@@ -10,12 +10,11 @@ declare global {
       prisma: PrismaClient;
       getSession(): Promise<Session | null>;
       getUser(): Promise<User>;
-      getProfile(userId: string): Promise<Profile>;
+      getProfile(profileOrUserId: string): Promise<Profile>;
     }
     interface PageData {
       session: Session | null;
       profile: Profile;
-      userId: string;
     }
     // interface Platform {}
   }

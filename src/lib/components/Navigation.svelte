@@ -2,7 +2,7 @@
   import { Calendar, ClipboardEdit, Dumbbell, Home, User } from 'lucide-svelte';
   import NavigationItem from './NavigationItem.svelte';
 
-  export let userId: string;
+  export let profileId: string;
 </script>
 
 <nav class="list-nav p-4">
@@ -15,7 +15,7 @@
       </NavigationItem>
     </li>
     <li>
-      <NavigationItem href={`/account/${userId}/training`} label="Allenamenti">
+      <NavigationItem href={`/account/${profileId}/training`} label="Allenamenti">
         <svelte:fragment slot="icon">
           <Dumbbell />
         </svelte:fragment>

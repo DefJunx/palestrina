@@ -16,7 +16,7 @@
 
   export let data;
 
-  $: ({ avatarSrc, avatarFallback, userId, supabase, session, profile } = data);
+  $: ({ avatarSrc, avatarFallback, supabase, session, profile } = data);
 
   $: userStore.set({ profile, avatarInitials: avatarFallback, avatarSrc });
 
@@ -38,7 +38,7 @@
 </script>
 
 <Drawer bgDrawer="bg-primary-500">
-  <Navigation {userId} />
+  <Navigation profileId={profile.id} />
 </Drawer>
 
 <div class="card !z-[999] w-72 p-4 shadow-xl" data-popup="userPopup">
@@ -87,7 +87,7 @@
     </AppBar>
   </svelte:fragment>
   <svelte:fragment slot="sidebarLeft">
-    <Navigation {userId} />
+    <Navigation profileId={profile.id} />
   </svelte:fragment>
   <div class="container mx-auto p-10"><slot /></div>
 </AppShell>

@@ -16,7 +16,6 @@ export async function load(event) {
   return {
     profile,
     fitnessData,
-    userId: user.id,
     avatarSrc: getAvatarUrl(event.locals.supabase, profile.avatarPath),
     avatarFallback: getAvatarFallbackfromName(profile.fullName)
   };
