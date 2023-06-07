@@ -1,6 +1,6 @@
 import { getAvatarFallbackfromName, getAvatarUrl, handleLoginRedirect } from '$src/lib/utils.js';
 import type { FitnessDataType } from '$src/types/database.models.js';
-import { error, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 
 export async function load(event) {
 	event.depends('update:profile');
@@ -10,11 +10,7 @@ export async function load(event) {
 	if (!session) throw redirect(302, handleLoginRedirect(event));
 
 	const userProfile = await event.locals.getProfile(session.user.id);
-	const fitnessData = (userProfile?.fitnessData as FitnessDataType[]) ?? [];
-
-	if (!userProfile) {
-		throw error(500, 'Profile does not exist');
-	}
+	const fitnessData = (userProfile.fitnessData as FitnessDataType[]) ?? [];
 
 	return {
 		userProfile,

@@ -1,26 +1,20 @@
 import { invalidate } from '$app/navigation';
-import { error, fail } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema';
 
 export async function load({ url, locals: { getProfile }, params }) {
-	let form: Awaited<ReturnType<typeof superValidate>>;
 	const userProfile = await getProfile(params.userId);
-	if (!userProfile) {
-		throw error(500);
-	}
+	let data: Record<string, string> | undefined;
 
 	if (!url.searchParams.has('new')) {
-		form = await superValidate(
-			{
-				username: userProfile.username ?? '',
-				fullName: userProfile.fullName ?? ''
-			},
-			validationSchema
-		);
-	} else {
-		form = await superValidate(validationSchema);
+		data = {
+			username: userProfile.username ?? '',
+			fullName: userProfile.fullName ?? ''
+		};
 	}
+
+	const form = await superValidate(data, validationSchema);
 
 	return { form, avatarPath: userProfile.avatarPath };
 }

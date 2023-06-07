@@ -1,4 +1,3 @@
-// src/hooks.server.ts
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
 import { prismaClient } from './lib/prisma';
@@ -16,16 +15,14 @@ export async function handle({ event, resolve }) {
 		const {
 			data: { session }
 		} = await event.locals.supabase.auth.getSession();
+
 		return session;
 	};
 
-	event.locals.getProfile = async (userId: string) => {
-		const userProfile = await event.locals.prisma.profile.findUnique({ where: { id: userId } });
-
-		if (!userProfile) return null;
-
-		return userProfile;
-	};
+	event.locals.getProfile = (userId: string) =>
+		event.locals.prisma.profile.findUniqueOrThrow({
+			where: { id: userId }
+		});
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {

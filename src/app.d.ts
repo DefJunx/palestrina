@@ -9,7 +9,7 @@ declare global {
 			supabase: SupabaseClient<Database>;
 			prisma: PrismaClient;
 			getSession(): Promise<Session | null>;
-			getProfile(userId: string): Promise<Profile | null>;
+			getProfile(userId: string): Promise<Profile>;
 		}
 		interface PageData {
 			session: Session | null;

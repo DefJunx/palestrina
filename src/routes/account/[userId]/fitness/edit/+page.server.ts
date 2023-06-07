@@ -1,14 +1,10 @@
 import type { FitnessDataType } from '$src/types/database.models.js';
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema.js';
 
 export async function load({ locals, params: { userId } }) {
 	const userProfile = await locals.getProfile(userId);
-
-	if (!userProfile) {
-		throw error(500, { message: 'Internal server error' });
-	}
 
 	const form = await superValidate(
 		{
