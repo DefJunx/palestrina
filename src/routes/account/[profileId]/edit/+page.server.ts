@@ -2,8 +2,8 @@ import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema';
 
-export async function load({ url, locals: { getProfile }, params }) {
-	const userProfile = await getProfile(params.userId);
+export async function load({ url, locals: { getProfile }, params: { profileId } }) {
+	const userProfile = await getProfile(profileId);
 	let data: Record<string, string> | undefined;
 
 	if (!url.searchParams.has('new')) {
@@ -19,7 +19,7 @@ export async function load({ url, locals: { getProfile }, params }) {
 }
 
 export const actions = {
-	default: async ({ request, params, locals: { supabase, prisma } }) => {
+	default: async ({ request, params: { profileId }, locals: { supabase, prisma } }) => {
 		const formData = await request.formData();
 
 		const form = await superValidate(formData, validationSchema);
@@ -36,7 +36,7 @@ export const actions = {
 			try {
 				const { data: avatarData, error: avatarError } = await supabase.storage
 					.from('avatars')
-					.upload(`${params.userId}`, avatar, {
+					.upload(`${profileId}`, avatar, {
 						cacheControl: '60',
 						upsert: true,
 						contentType: avatar.type
@@ -60,7 +60,7 @@ export const actions = {
 
 		try {
 			await prisma.profile.update({
-				where: { id: params.userId },
+				where: { id: profileId },
 				data: {
 					hasCompiled: true,
 					fullName,
