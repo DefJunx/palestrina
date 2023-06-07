@@ -42,8 +42,8 @@
             disabled={loading}
             bind:value={$form.fitnessData[i].label}
           />
-          {#if $errors.fitnessData?.[i].label}
-            <small class="font-semibold text-red-400">{$errors.fitnessData[i].label}</small>
+          {#if $errors.fitnessData?.[i]?.label}
+            <small class="font-semibold text-red-400">{$errors.fitnessData[i]?.label}</small>
           {/if}
         </div>
         <span class="pt-6">:</span>
@@ -56,8 +56,8 @@
             disabled={loading}
             bind:value={$form.fitnessData[i].value}
           />
-          {#if $errors.fitnessData?.[i].value}
-            <small class="font-semibold text-red-400">{$errors.fitnessData[i].value}</small>
+          {#if $errors.fitnessData?.[i]?.value}
+            <small class="font-semibold text-red-400">{$errors.fitnessData[i]?.value}</small>
           {/if}
         </div>
         <button disabled={loading} class="btn-icon mt-6" on:click={() => removeParameter(i)}>
