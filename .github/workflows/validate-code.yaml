@@ -18,10 +18,12 @@ jobs:
         with:
           node-version: 19
 
-      - name: Install pnpm
-        run: |
-          curl -L https://raw.githubusercontent.com/pnpm/self-installer/master/install.js | node
-          echo "::add-path::${HOME}/.pnpm/bin"
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
