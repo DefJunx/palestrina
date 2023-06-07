@@ -9,7 +9,7 @@
 
 	if (!data.profile.hasCompiled) {
 		if (browser) {
-			goto(`/account/${data.userId}/edit?new=true`);
+			goto(`/account/${data.profile.id}/edit?new=true`);
 		}
 	}
 
@@ -22,7 +22,7 @@
 			<Avatar
 				class="w-32"
 				src={$userStore.avatarSrc}
-				alt={data.userId ?? ''}
+				alt={data.profile.username ?? ''}
 				initials={$userStore.avatarInitials}
 				fallback="/images/user_placeholder.png"
 			/>
@@ -32,7 +32,7 @@
 			</div>
 		</div>
 		<div class="mt-8">
-			<a class="btn variant-filled-primary" href={`/account/${data.userId}/edit`}
+			<a class="btn variant-filled-primary" href={`/account/${data.profile.id}/edit`}
 				>Modifica il profilo</a
 			>
 		</div>
@@ -60,7 +60,7 @@
 				</div>
 			{/if}
 			<div class="mt-4">
-				<a class="btn variant-filled-primary" href={`/account/${data.userId}/fitness/edit`}
+				<a class="btn variant-filled-primary" href={`/account/${data.profile.id}/fitness/edit`}
 					>Modifica dati atleta</a
 				>
 			</div>

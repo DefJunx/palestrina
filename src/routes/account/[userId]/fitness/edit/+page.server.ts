@@ -27,7 +27,7 @@ export const actions = {
 		try {
 			const { fitnessData, fitnessNotes } = form.data;
 			await prisma.profile.update({
-				where: { userId: params.userId },
+				where: { id: params.userId },
 				data: {
 					fitnessData,
 					fitnessNotes

@@ -60,7 +60,7 @@ export const actions = {
 
 		try {
 			await prisma.profile.update({
-				where: { userId: params.userId },
+				where: { id: params.userId },
 				data: {
 					hasCompiled: true,
 					fullName,
