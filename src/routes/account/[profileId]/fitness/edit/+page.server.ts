@@ -2,8 +2,8 @@ import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema.js';
 
-export async function load({ parent }) {
-	const userProfile = (await parent()).profile;
+export async function load({ locals: { getProfile }, params: { profileId } }) {
+	const userProfile = await getProfile(profileId);
 
 	const form = await superValidate(
 		{
@@ -27,7 +27,7 @@ export const actions = {
 		try {
 			const { fitnessData, fitnessNotes } = form.data;
 			await prisma.profile.update({
-				where: { id: params.userId },
+				where: { id: params.profileId },
 				data: {
 					fitnessData,
 					fitnessNotes
