@@ -13,7 +13,8 @@
 		},
 		onResult() {
 			loading = false;
-		}
+		},
+		invalidateAll: false
 	});
 
 	let loading = false;
@@ -56,16 +57,16 @@
 		{/if}
 	</div>
 	<div class="flex flex-col">
-		<label class="label" for="full_name">Nome</label>
+		<label class="label" for="fullName">Nome</label>
 		<input
 			class="input mt-1"
 			disabled={loading}
 			type="text"
-			name="full_name"
+			name="fullName"
 			bind:value={$form.fullName}
 		/>
-		{#if $errors.full_name}
-			<small class="font-semibold text-red-400">{$errors.full_name}</small>
+		{#if $errors.fullName}
+			<small class="font-semibold text-red-400">{$errors.fullName}</small>
 		{/if}
 	</div>
 	<div class="flex flex-col">

@@ -6,7 +6,7 @@
 
 	export let data;
 
-	if (!data.userProfile.has_compiled) {
+	if (!data.userProfile.hasCompiled) {
 		if (browser) {
 			goto(`/account/${data.userProfile.id}/edit?new=true`);
 		}
@@ -24,7 +24,7 @@
 				fallback="/images/user_placeholder.png"
 			/>
 			<div class="flex flex-col">
-				<span>Nome: {data.userProfile.full_name}</span>
+				<span>Nome: {data.userProfile.fullName}</span>
 				<span>Username: {data.userProfile.username}</span>
 			</div>
 		</div>
@@ -48,11 +48,11 @@
 				<div>Non ci sono dati</div>
 			{/if}
 			<hr class="text-primary border-primary my-4" />
-			{#if data.userProfile.fitness_notes}
+			{#if data.userProfile.fitnessNotes}
 				<div>
 					<h2 class="text-lg font-semibold">Note</h2>
 					<div class="border-primary prose mt-2 min-w-full break-words border p-2">
-						{@html data.userProfile.fitness_notes}
+						{@html data.userProfile.fitnessNotes}
 					</div>
 				</div>
 			{/if}

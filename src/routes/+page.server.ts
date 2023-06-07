@@ -2,7 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { forgotPasswordSchema, loginSchema, registerSchema } from './validation.schema.js';
 
-export async function load({ url, locals: { getSession, supabase } }) {
+export async function load({ url, locals: { getSession, supabase, prisma } }) {
 	const session = await getSession();
 
 	if (session) {
@@ -12,11 +12,16 @@ export async function load({ url, locals: { getSession, supabase } }) {
 	const code = url.searchParams.get('code') ?? '';
 
 	if (code) {
-		const { error: authError } = await supabase.auth.exchangeCodeForSession(code);
+		const {
+			data: { user },
+			error: authError
+		} = await supabase.auth.exchangeCodeForSession(code);
 
-		if (authError) {
-			throw error(500, authError.message);
+		if (authError || !user) {
+			throw error(500, authError?.message ?? 'Unexpected authentication error');
 		}
+
+		await prisma.profile.create({ data: { userId: user.id } });
 
 		throw redirect(307, '/account');
 	}
@@ -59,10 +64,10 @@ export const actions = {
 
 		const { error: registerError } = await supabase.auth.signUp({ email, password });
 
-		console.log(registerError);
-
 		if (registerError) {
-			return message(registerForm, registerError.message, { status: 400 });
+			console.log(registerError);
+
+			return message(registerForm, 'There was an error in registration', { status: 400 });
 		}
 
 		return message(registerForm, 'Controlla il tuo indirizzo email');

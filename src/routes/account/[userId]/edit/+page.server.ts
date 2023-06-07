@@ -22,6 +22,9 @@ export async function load({ url, locals: { getProfile }, params }) {
 export const actions = {
 	default: async ({ request, params, locals: { supabase, prisma } }) => {
 		const formData = await request.formData();
+
+		console.log(formData);
+
 		const form = await superValidate(formData, validationSchema);
 		let avatar_path: string = formData.get('originalPath') as string;
 
@@ -29,6 +32,8 @@ export const actions = {
 			// Again, always return { form } and things will just work.
 			return fail(400, { form });
 		}
+
+		console.log(form);
 
 		const avatar = formData.get('avatar');
 
