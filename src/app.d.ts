@@ -1,5 +1,5 @@
 import type { PrismaClient, Profile } from '@prisma/client';
-import { Session, SupabaseClient } from '@supabase/supabase-js';
+import { Session, SupabaseClient, type User } from '@supabase/supabase-js';
 import type { Database } from './types/database.types';
 
 declare global {
@@ -9,6 +9,7 @@ declare global {
 			supabase: SupabaseClient<Database>;
 			prisma: PrismaClient;
 			getSession(): Promise<Session | null>;
+			getUser(): Promise<User>;
 			getProfile(userId: string): Promise<Profile>;
 		}
 		interface PageData {
