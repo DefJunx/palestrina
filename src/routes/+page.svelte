@@ -78,14 +78,14 @@
         <label class="label" for="email">Email</label>
         <input disabled={loading} class="input" name="email" type="text" />
         {#if $loginErrors.email}
-          <small class="text-error-500">{$loginErrors.email[0]}</small>
+          <small class="text-error-500">{$loginErrors.email}</small>
         {/if}
       </div>
       <div>
         <label class="label" for="password">Password</label>
         <input disabled={loading} class="input" name="password" type="password" />
         {#if $loginErrors.password}
-          <small class="text-error-500">{$loginErrors.password[0]}</small>
+          <small class="text-error-500">{$loginErrors.password}</small>
         {/if}
       </div>
       <button disabled={loading} class="btn variant-filled-primary" type="submit">Login</button>
@@ -112,14 +112,14 @@
         <label class="label" for="email">Email</label>
         <input disabled={loading} class="input" name="email" type="text" />
         {#if $registerErrors.email}
-          <small class="text-error-500">{$registerErrors.email[0]}</small>
+          <small class="text-error-500">{$registerErrors.email}</small>
         {/if}
       </div>
       <div>
         <label class="label" for="password">Password</label>
         <input disabled={loading} class="input" name="password" type="password" />
         {#if $registerErrors.password}
-          <small class="text-error-500">{$registerErrors.password[0]}</small>
+          <small class="text-error-500">{$registerErrors.password}</small>
         {/if}
       </div>
       <button disabled={loading} class="btn variant-filled-primary" type="submit">Registrati</button>
@@ -143,7 +143,7 @@
         <label class="label" for="email">Email</label>
         <input disabled={loading} class="input" name="email" type="text" />
         {#if $forgotPasswordErrors.email}
-          <small class="text-error-500">{$forgotPasswordErrors.email[0]}</small>
+          <small class="text-error-500">{$forgotPasswordErrors.email}</small>
         {/if}
       </div>
       <button disabled={loading} class="btn variant-filled-primary" type="submit">Invia</button>

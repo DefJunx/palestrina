@@ -18,14 +18,14 @@
   {/if}
   <div>
     <label for="newPassword" class="label">Nuova Password</label>
-    <input name="newPassword" type="text" class="input" {...$constraints.newPassword} />
+    <input name="newPassword" type="password" class="input" {...$constraints.newPassword} />
     {#if $errors.newPassword}
       <small class="text-error-500">{$errors.newPassword[0]}</small>
     {/if}
   </div>
   <div>
     <label for="confirmNewPassword" class="label">Conferma Nuova Password</label>
-    <input name="confirmNewPassword" type="text" class="input" {...$constraints.confirmNewPassword} />
+    <input name="confirmNewPassword" type="password" class="input" {...$constraints.confirmNewPassword} />
     {#if $errors.confirmNewPassword}
       <small class="text-error-500">{$errors.confirmNewPassword[0]}</small>
     {/if}
