@@ -39,7 +39,7 @@ export async function handle({ event, resolve }) {
 
 	event.locals.getProfile = (profileOrUserId: string) =>
 		event.locals.prisma.profile.findFirstOrThrow({
-			where: { id: profileOrUserId, OR: [{ userId: profileOrUserId }] }
+			where: { OR: [{ userId: profileOrUserId }, { id: profileOrUserId }] }
 		});
 
 	return resolve(event, {
