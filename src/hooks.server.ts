@@ -1,4 +1,4 @@
-import {sequence} from '@sveltejs/kit/hooks';
+import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
@@ -7,9 +7,9 @@ import prismaClient from './lib/prisma';
 import type { Database } from './types/database.types';
 
 Sentry.init({
-    dsn: "https://0f0e4d7691364f45907b567cf4d100d4@o4505319050903552.ingest.sentry.io/4505319067680768",
-    tracesSampleRate: 1
-})
+  dsn: 'https://0f0e4d7691364f45907b567cf4d100d4@o4505319050903552.ingest.sentry.io/4505319067680768',
+  tracesSampleRate: 1
+});
 
 export const handleError = Sentry.handleErrorWithSentry();
 
