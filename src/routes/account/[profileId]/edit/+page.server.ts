@@ -38,8 +38,6 @@ export const actions = {
 
     if (avatar && avatar instanceof File && avatar.size > 0) {
       try {
-        console.log('new avPath', `${profileId}_${new Date().getTime()}`);
-
         const { error: removeError } = await supabase.storage.from('avatars').remove([avatar_path]);
 
         if (removeError) {
@@ -78,8 +76,6 @@ export const actions = {
       });
     } catch (e) {
       if (e) {
-        console.log('error', e);
-
         return fail(500, { form });
       }
     }

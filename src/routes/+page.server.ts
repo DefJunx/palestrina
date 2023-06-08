@@ -23,8 +23,6 @@ export async function load({ url, locals: { getSession, supabase, prisma } }) {
 
     const profile = await prisma.profile.create({ data: { userId: user.id } });
 
-    console.log('new profile', profile);
-
     throw redirect(307, '/account');
   }
 

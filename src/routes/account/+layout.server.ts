@@ -11,8 +11,6 @@ export async function load(event) {
   const profile = await event.locals.getProfile(user.id);
   const fitnessData = (profile.fitnessData as { label: string; value: string }[]) ?? [];
 
-  console.log('avatar path', profile.avatarPath);
-
   return {
     profile,
     fitnessData,

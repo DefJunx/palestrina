@@ -34,8 +34,6 @@ export const actions = {
         }
       });
     } catch (e) {
-      console.log(e);
-
       return message(form, 'unexpected error', { status: 500 });
     }
 
