@@ -1,27 +1,27 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
+  import CharacterCount from '@tiptap/extension-character-count';
   import StarterKit from '@tiptap/starter-kit';
   import { Heading1, Heading2, List, ListOrdered, Minus, Pilcrow } from 'lucide-svelte';
   import { onDestroy, onMount } from 'svelte';
 
-  export let maxChars = 500;
+  export let maxChars = 400;
   export let charsTyped = 0;
   export let content = '';
+  let borderClass = 'border-primary';
 
   let editor: Editor;
   let element: HTMLDivElement;
 
+  $: charsTyped = editor?.storage?.characterCount?.characters();
+  $: borderClass = charsTyped >= maxChars ? 'border-2 border-error-400' : 'border-primary';
+
   onMount(() => {
     editor = new Editor({
       element: element,
-      extensions: [StarterKit],
+      extensions: [StarterKit, CharacterCount.configure({ limit: maxChars })],
       content,
       onUpdate({ editor }) {
-        charsTyped = editor.getHTML().length;
-        if (charsTyped >= maxChars) {
-          return;
-        }
-
         content = editor.getHTML();
       },
       onTransaction() {
@@ -91,6 +91,6 @@
   <div>Loading...</div>
 {/if}
 
-<div class="border-primary mt-4 max-h-[250px] overflow-y-scroll border p-4">
+<div class="{borderClass} mt-4 max-h-[250px] overflow-y-scroll border p-4">
   <div bind:this={element} />
 </div>
