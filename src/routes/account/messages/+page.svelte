@@ -1,6 +1,6 @@
 <script lang="ts">
   import Avatar from '$src/lib/components/Avatar.svelte';
-  import { userStore } from '$src/lib/stores.js';
+  import { userStore } from '$src/lib/stores';
   import { ChevronRight, Plus } from 'lucide-svelte';
 
   export let data;
@@ -10,7 +10,7 @@
 
 <div class="flex items-center justify-between">
   <h1 class="h1">Conversazioni</h1>
-  <button class="btn variant-filled-primary">
+  <button type="button" class="btn variant-filled-primary">
     <Plus />
     Nuova
   </button>
