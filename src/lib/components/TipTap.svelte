@@ -4,9 +4,12 @@
   import { Heading1, Heading2, List, ListOrdered, Minus, Pilcrow } from 'lucide-svelte';
   import { onDestroy, onMount } from 'svelte';
 
+  export let maxChars = 500;
+  export let charsTyped = 0;
+  export let content = '';
+
   let editor: Editor;
   let element: HTMLDivElement;
-  export let content = '';
 
   onMount(() => {
     editor = new Editor({
@@ -14,6 +17,11 @@
       extensions: [StarterKit],
       content,
       onUpdate({ editor }) {
+        charsTyped = editor.getHTML().length;
+        if (charsTyped >= maxChars) {
+          return;
+        }
+
         content = editor.getHTML();
       },
       onTransaction() {
@@ -21,7 +29,7 @@
       },
       editorProps: {
         attributes: {
-          class: 'prose dark:prose-invert prose-sm sm:prose-base border border-primary min-w-full focus:outline-none'
+          class: 'prose dark:prose-invert prose-sm sm:prose-base min-w-full focus:outline-none'
         }
       }
     });
@@ -83,4 +91,6 @@
   <div>Loading...</div>
 {/if}
 
-<div class="mt-4" bind:this={element} />
+<div class="border-primary mt-4 max-h-[250px] overflow-y-scroll border p-4">
+  <div bind:this={element} />
+</div>

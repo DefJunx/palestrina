@@ -53,7 +53,9 @@
       {#if data.profile.fitnessNotes}
         <div>
           <h2 class="text-lg font-semibold">Note</h2>
-          <div class="border-primary prose mt-2 min-w-full break-words border p-2 prose-p:text-white">
+          <div
+            class="border-primary prose mt-2 max-h-96 min-w-full overflow-y-scroll break-words border p-2 prose-p:text-white"
+          >
             {@html data.profile.fitnessNotes}
           </div>
         </div>

@@ -79,7 +79,7 @@ model Profile {
   fullName     String?
   avatarPath   String?
   fitnessData  Json?
-  fitnessNotes String?
+  fitnessNotes String?  @db.VarChar(500)
   role         UserRole @default(User)
   hasCompiled  Boolean  @default(false)
 

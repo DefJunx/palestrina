@@ -7,6 +7,8 @@
   export let data;
 
   let loading = false;
+  let charsTyped = 0;
+  let maxChars = 500;
 
   const { errors, enhance, form } = superForm(data.form, {
     dataType: 'json',
@@ -72,8 +74,12 @@
   </div>
 
   <div class="border-primary my-4 border p-8">
-    <TipTap bind:content={$form.fitnessNotes} />
+    <TipTap bind:content={$form.fitnessNotes} bind:charsTyped bind:maxChars />
+    {#if charsTyped >= maxChars}
+      <span>troppi caratteri</span>
+    {/if}
+    <span>{maxChars - charsTyped} / {maxChars}</span>
   </div>
 
-  <button disabled={loading} type="submit" class="btn variant-filled-primary">Salva</button>
+  <button disabled={loading || charsTyped >= maxChars} type="submit" class="btn variant-filled-primary">Salva</button>
 </form>

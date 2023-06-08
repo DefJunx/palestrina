@@ -89,5 +89,5 @@
   <svelte:fragment slot="sidebarLeft">
     <Navigation profileId={profile.id} />
   </svelte:fragment>
-  <div class="container mx-auto p-10"><slot /></div>
+  <div class="container mx-auto h-full p-10"><slot /></div>
 </AppShell>
