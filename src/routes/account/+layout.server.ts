@@ -10,11 +10,13 @@ export async function load(event) {
 
   const profile = await event.locals.getProfile(user.id);
   const fitnessData = (profile.fitnessData as { label: string; value: string }[]) ?? [];
+  const newMessageCount = (await prisma.newMessageNotification.findMany({ where: { profileId: profile.id } })).length;
 
   return {
     profile,
     fitnessData,
     avatarSrc: getAvatarUrl(event.locals.supabase, profile.avatarPath),
-    avatarFallback: getAvatarFallbackfromName(profile.fullName)
+    avatarFallback: getAvatarFallbackfromName(profile.fullName),
+    newMessageCount
   };
 }

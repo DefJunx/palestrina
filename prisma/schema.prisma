@@ -9,21 +9,27 @@ datasource db {
 }
 
 model Conversation {
-  id         String @id @default(uuid())
-  senderId   String
-  receiverId String
+  id String @id @default(uuid())
 
-  hasNewMessage Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  sender   Profile @relation("sentConversations", fields: [senderId], references: [id])
-  receiver Profile @relation("receivedConversations", fields: [receiverId], references: [id])
+  participants Profile[]
 
-  messages Message[]
+  messages               Message[]
+  NewMessageNotification NewMessageNotification[]
+}
 
-  @@index([senderId])
-  @@index([receiverId])
+model NewMessageNotification {
+  id             String @id @default(uuid())
+  conversationId String @unique
+  profileId      String @unique
+
+  user         Profile      @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([profileId])
 }
 
 model Message {
@@ -86,10 +92,10 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sentConversations     Conversation[] @relation("sentConversations")
-  receivedConversations Conversation[] @relation("receivedConversations")
+  conversations Conversation[]
 
-  sentMessages Message[] @relation("messageSender")
+  sentMessages           Message[]                @relation("messageSender")
+  newMessageNotification NewMessageNotification[]
 
   @@index([userId])
 }

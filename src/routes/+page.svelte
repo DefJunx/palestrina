@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import { toastStore } from '@skeletonlabs/skeleton';
   import { AlertTriangle } from 'lucide-svelte';
@@ -54,10 +55,10 @@
   $: {
     if ($page.status === 200) {
       if ($registerMessage) {
-        toastStore.trigger({ message: $registerMessage });
+        if (browser) toastStore.trigger({ message: $registerMessage });
       }
       if ($forgotPasswordMessage) {
-        toastStore.trigger({ message: $forgotPasswordMessage });
+        if (browser) toastStore.trigger({ message: $forgotPasswordMessage });
       }
     }
   }

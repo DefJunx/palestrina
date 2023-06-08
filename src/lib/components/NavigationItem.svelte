@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import { drawerStore } from '@skeletonlabs/skeleton';
 
@@ -6,7 +7,7 @@
   export let label: string;
 
   function drawerClose(): void {
-    drawerStore.close();
+    if (browser) drawerStore.close();
   }
 
   $: classesActive = (href: string) => (href === $page.url.pathname ? '!bg-secondary-500 !text-white' : '');

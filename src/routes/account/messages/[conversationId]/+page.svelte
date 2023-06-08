@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import { dateFormatter } from '$src/lib/client/dateFormatter';
   import { Avatar, toastStore } from '@skeletonlabs/skeleton';
@@ -14,7 +15,7 @@
   $: typedChars = $form.message.length;
 
   $: if ($page.status === 200 && $message) {
-    toastStore.trigger({ message: $message });
+    if (browser) toastStore.trigger({ message: $message });
     scrollChatBottom('smooth');
     $form.message = '';
   }
@@ -85,6 +86,13 @@
         {...$constraints.message}
       />
       <input type="hidden" name="senderId" value={data.profile.id} />
+
+      <input
+        type="hidden"
+        name="receiverId"
+        value={data.conversation.participants.filter((p) => p.id !== data.profile.id)[0]}
+      />
+
       <button
         type="submit"
         class="variant-filled-primary"

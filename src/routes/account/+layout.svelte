@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import Avatar from '$src/lib/components/Avatar.svelte';
   import Navigation from '$src/lib/components/Navigation.svelte';
@@ -10,20 +11,31 @@
     LightSwitch,
     drawerStore,
     popup,
+    toastStore,
     type PopupSettings
   } from '@skeletonlabs/skeleton';
   import { LogOut, Mail, Menu } from 'lucide-svelte';
 
   export let data;
 
+  if (browser && data.newMessageCount > 0) {
+    toastStore.trigger({
+      message: 'Ci sono messaggi non letti',
+      action: {
+        label: 'Vai ai messaggi',
+        response: () => goto('/account/messages')
+      }
+    });
+  }
+
   $: ({ avatarSrc, avatarFallback, supabase, session, profile } = data);
 
-  $: userStore.set({ profile, avatarInitials: avatarFallback, avatarSrc });
+  $: if (browser) userStore.set({ profile, avatarInitials: avatarFallback, avatarSrc });
 
   $: if (!session) goto('/');
 
   function drawerOpen(): void {
-    drawerStore.open();
+    if (browser) drawerStore.open();
   }
 
   const userPopup: PopupSettings = { event: 'click', target: 'userPopup', placement: 'bottom' };

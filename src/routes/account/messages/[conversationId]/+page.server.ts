@@ -3,8 +3,23 @@ import { fail } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { messageSchema } from './validation.schema';
 
-export async function load({ params: { conversationId }, locals: { prisma, supabase } }) {
+export async function load({ params: { conversationId }, locals: { prisma, supabase, getProfile, getUser } }) {
   const form = await superValidate(messageSchema);
+  const user = await getUser();
+  const profile = await getProfile(user.id);
+  const conversation = await prisma.conversation.findFirstOrThrow({
+    where: { id: conversationId },
+    include: { participants: true }
+  });
+
+  const notification = await prisma.newMessageNotification.findFirst({
+    where: { profileId: profile.id, conversationId }
+  });
+
+  if (notification) {
+    await prisma.newMessageNotification.delete({ where: { id: notification.id } });
+  }
+
   const messages = await Promise.all(
     (
       await prisma.message.findMany({
@@ -23,6 +38,7 @@ export async function load({ params: { conversationId }, locals: { prisma, supab
 
   return {
     messages,
+    conversation,
     form
   };
 }
@@ -38,6 +54,13 @@ export const actions = {
         text: form.data.message,
         Conversation: { connect: { id: conversationId } },
         sender: { connect: { id: form.data.senderId } }
+      }
+    });
+
+    await prisma.newMessageNotification.create({
+      data: {
+        conversationId,
+        profileId: form.data.receiverId
       }
     });
 
