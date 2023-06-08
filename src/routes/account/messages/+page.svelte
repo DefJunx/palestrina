@@ -1,9 +1,5 @@
 <script lang="ts">
-  // import { superForm } from 'sveltekit-superforms/client';
-
   export let data;
-
-  // const { errors, constraints, form, enhance } = superForm(data.form);
 </script>
 
 <h1 class="h1">Conversazioni</h1>

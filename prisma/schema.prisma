@@ -30,21 +30,17 @@ model Message {
   id             String @id @default(uuid())
   conversationId String
   senderId       String
-  receiverId     String
 
-  title String
-  text  String
+  text String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   Conversation Conversation @relation(fields: [conversationId], references: [id])
   sender       Profile      @relation("messageSender", fields: [senderId], references: [id])
-  receiver     Profile      @relation("messageReceiver", fields: [receiverId], references: [id])
 
   @@index([conversationId])
   @@index([senderId])
-  @@index([receiverId])
 }
 
 model Exercise {
@@ -93,8 +89,7 @@ model Profile {
   sentConversations     Conversation[] @relation("sentConversations")
   receivedConversations Conversation[] @relation("receivedConversations")
 
-  sentMessages     Message[] @relation("messageSender")
-  receivedMessages Message[] @relation("messageReceiver")
+  sentMessages Message[] @relation("messageSender")
 
   @@index([userId])
 }

@@ -1,4 +1,4 @@
-import { getAvatarFallbackfromName, getAvatarUrl, handleLoginRedirect } from '$src/lib/utils.js';
+import { getAvatarFallbackfromName, getAvatarUrl, handleLoginRedirect } from '$src/lib/server/utils';
 import { redirect } from '@sveltejs/kit';
 
 export async function load(event) {
