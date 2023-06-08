@@ -3,8 +3,8 @@
   import { browser } from '$app/environment';
   import { goto, invalidate } from '$app/navigation';
   import { page } from '$app/stores';
+  import Avatar from '$src/lib/components/Avatar.svelte';
   import { userStore } from '$src/lib/stores';
-  import { Avatar } from '@skeletonlabs/skeleton';
 
   export let data;
 
@@ -21,11 +21,10 @@
   <section class="border-primary rounded-lg border p-8">
     <div class="flex items-center gap-x-8">
       <Avatar
-        class="w-32"
+        width="w-32"
         src={$userStore.avatarSrc}
-        alt={data.profile.username ?? ''}
+        alt={data.profile.username ?? undefined}
         initials={$userStore.avatarInitials}
-        fallback="/images/user_placeholder.png"
       />
       <div class="flex flex-col">
         <span>Nome: {data.profile.fullName}</span>

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import Avatar from '$src/lib/components/Avatar.svelte';
   import Navigation from '$src/lib/components/Navigation.svelte';
   import { userStore } from '$src/lib/stores.js';
   import {
     AppBar,
     AppShell,
-    Avatar,
     Drawer,
     LightSwitch,
     drawerStore,
@@ -77,7 +77,6 @@
             class="hidden md:block"
             src={$userStore.avatarSrc}
             initials={$userStore.avatarInitials}
-            fallback="/images/user_placeholder.png"
             width="w-10"
           />
         </button>

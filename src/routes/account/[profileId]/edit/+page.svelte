@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import Avatar from '$src/lib/components/Avatar.svelte';
   import { userStore } from '$src/lib/stores.js';
-  import { Avatar } from '@skeletonlabs/skeleton';
 
   import { superForm } from 'sveltekit-superforms/client';
 
@@ -18,7 +18,8 @@
   });
 
   let loading = false;
-  let previewSrc = '';
+  let previewSrc = $userStore.avatarSrc;
+  let avatarAlt = $form.username ?? '';
 
   const previewAvatar = async (e: Event) => {
     const inputElement = e.target as HTMLInputElement;
@@ -55,12 +56,8 @@
   <div class="flex flex-col">
     <label class="label" for="full_name">Avatar</label>
     <div class="mt-4 flex items-center gap-x-4">
-      <Avatar
-        src={previewSrc !== '' ? previewSrc : $userStore.avatarSrc}
-        alt={$form.username ?? ''}
-        initials={$userStore.avatarInitials}
-        fallback="/images/user_placeholder.png"
-      />
+      <Avatar bind:src={previewSrc} alt={avatarAlt} initials={$userStore.avatarInitials} />
+
       <input class="input" disabled={loading} type="file" name="avatar" accept="image/*" on:change={previewAvatar} />
     </div>
   </div>
