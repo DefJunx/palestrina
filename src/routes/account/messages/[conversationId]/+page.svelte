@@ -55,6 +55,9 @@
         {/if}
       </div>
     {/each}
+    {#if data.messages.length === 0}
+      <div class="flex h-full items-center justify-center">Non ci sono messaggi</div>
+    {/if}
   </div>
   <div>
     <form
