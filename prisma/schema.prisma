@@ -79,7 +79,7 @@ model TrainingProgram {
 
 model Profile {
   id     String @id @default(uuid())
-  userId String
+  userId String @unique
 
   username     String?
   fullName     String?
