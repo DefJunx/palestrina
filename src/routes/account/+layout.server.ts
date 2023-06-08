@@ -2,10 +2,6 @@ import { getAvatarFallbackfromName, getAvatarUrl, handleLoginRedirect } from '$s
 import { redirect } from '@sveltejs/kit';
 
 export async function load(event) {
-  event.depends('update:profile');
-
-  console.log('parent being called');
-
   const session = await event.locals.getSession();
 
   if (!session) throw redirect(302, handleLoginRedirect(event));
@@ -14,6 +10,8 @@ export async function load(event) {
 
   const profile = await event.locals.getProfile(user.id);
   const fitnessData = (profile.fitnessData as { label: string; value: string }[]) ?? [];
+
+  console.log('avatar path', profile.avatarPath);
 
   return {
     profile,

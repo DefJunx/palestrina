@@ -75,8 +75,8 @@
         <button type="button" class="btn-icon hidden md:block" use:popup={userPopup}>
           <Avatar
             class="hidden md:block"
-            src={$userStore.avatarSrc}
-            initials={$userStore.avatarInitials}
+            bind:src={$userStore.avatarSrc}
+            bind:initials={$userStore.avatarInitials}
             width="w-10"
           />
         </button>

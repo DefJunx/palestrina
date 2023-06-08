@@ -1,8 +1,7 @@
 <script lang="ts">
   /* eslint-disable svelte/no-at-html-tags */
   import { browser } from '$app/environment';
-  import { goto, invalidate } from '$app/navigation';
-  import { page } from '$app/stores';
+  import { goto } from '$app/navigation';
   import Avatar from '$src/lib/components/Avatar.svelte';
   import { userStore } from '$src/lib/stores';
 
@@ -13,8 +12,6 @@
       goto(`/account/${data.profile.id}/edit?new=true`);
     }
   }
-
-  $: if ($page.url.searchParams.get('profileUpdated') && browser) invalidate('update:profile');
 </script>
 
 <div class="w-full md:mx-auto md:max-w-5xl">
@@ -22,9 +19,9 @@
     <div class="flex items-center gap-x-8">
       <Avatar
         width="w-32"
-        src={$userStore.avatarSrc}
+        bind:src={$userStore.avatarSrc}
         alt={data.profile.username ?? undefined}
-        initials={$userStore.avatarInitials}
+        bind:initials={$userStore.avatarInitials}
       />
       <div class="flex flex-col">
         <span>Nome: {data.profile.fullName}</span>

@@ -30,13 +30,25 @@ export const actions = {
       return fail(400, { form });
     }
 
+    const {
+      data: { fullName, username }
+    } = form;
+
     const avatar = formData.get('avatar');
 
     if (avatar && avatar instanceof File && avatar.size > 0) {
       try {
+        console.log('new avPath', `${profileId}_${new Date().getTime()}`);
+
+        const { error: removeError } = await supabase.storage.from('avatars').remove([avatar_path]);
+
+        if (removeError) {
+          throw new Error('error removing old avatar');
+        }
+
         const { data: avatarData, error: avatarError } = await supabase.storage
           .from('avatars')
-          .upload(`${profileId}`, avatar, {
+          .upload(`${profileId}_${new Date().getTime()}`, avatar, {
             cacheControl: '60',
             upsert: true,
             contentType: avatar.type
@@ -53,10 +65,6 @@ export const actions = {
         console.error(e);
       }
     }
-
-    const {
-      data: { fullName, username }
-    } = form;
 
     try {
       await prisma.profile.update({
@@ -76,6 +84,6 @@ export const actions = {
       }
     }
 
-    throw redirect(302, '/account?profileUpdated=true');
+    throw redirect(302, '/account');
   }
 };
