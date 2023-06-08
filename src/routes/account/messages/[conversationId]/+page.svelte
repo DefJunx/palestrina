@@ -6,9 +6,12 @@
   import { superForm } from 'sveltekit-superforms/client';
 
   export let data;
-
-  let elemChat: HTMLElement;
   const { enhance, constraints, form, message } = superForm(data.form);
+  const maxChars = 250;
+  let typedChars = 0;
+  let elemChat: HTMLElement;
+
+  $: typedChars = $form.message.length;
 
   $: if ($page.status === 200 && $message) {
     toastStore.trigger({ message: $message });
@@ -32,7 +35,7 @@
                 <p class="font-bold">{message.sender.fullName}</p>
                 <small class="font-semibold opacity-50">{dateFormatter.format(message.createdAt)}</small>
               </header>
-              <p>{message.text}</p>
+              <p class="w-fit max-w-[40vw] break-words">{message.text}</p>
             </div>
 
             <Avatar src={message.sender.avatarSrc} width="w-12" />
@@ -43,10 +46,10 @@
 
             <div class="card variant-filled-secondary space-y-2 rounded-tl-none p-4">
               <header class="flex items-center justify-between">
-                <p class="font-bold">{message.sender.fullName}</p>
+                <p>{message.sender.fullName}</p>
                 <small class="font-semibold opacity-50">{dateFormatter.format(message.createdAt)}</small>
               </header>
-              <p>{message.text}</p>
+              <p class="w-fit max-w-[40vw] break-words">{message.text}</p>
             </div>
           </div>
         {/if}
@@ -57,19 +60,33 @@
     <form
       method="post"
       action="?/sendMessage"
-      class="input-group-divider input-group grid-cols-[1fr_auto] rounded-container-token"
+      class="input-group-divider input-group grid-cols-[auto_1fr_auto] rounded-container-token"
       use:enhance
     >
+      <span class="input-group-shim p- inline-flex items-center justify-center px-3 py-2">
+        {maxChars - typedChars}
+      </span>
       <textarea
         class="resize-none border-0 bg-transparent ring-0"
         name="message"
         placeholder="Inserisci un messaggio"
         rows="1"
+        on:keypress={(e) => {
+          if (maxChars - typedChars === 0) {
+            e.preventDefault();
+            return false;
+          }
+          return e;
+        }}
         bind:value={$form.message}
         {...$constraints.message}
       />
       <input type="hidden" name="senderId" value={data.profile.id} />
-      <button type="submit" class="variant-filled-primary" disabled={$form.message === ''}>
+      <button
+        type="submit"
+        class="variant-filled-primary"
+        disabled={$form.message === '' || maxChars - typedChars === 0}
+      >
         <Send class="text-white" />
       </button>
     </form>
