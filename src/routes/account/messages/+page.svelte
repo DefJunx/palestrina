@@ -27,7 +27,11 @@
     component: modalComponent
   };
 
-  const openNewConversationModal = () => modalStore.trigger(modal);
+  const openNewConversationModal = () => {
+    if (browser) {
+      modalStore.trigger(modal);
+    }
+  };
 </script>
 
 <div class="flex items-center justify-between">
