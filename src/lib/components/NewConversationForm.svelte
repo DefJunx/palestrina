@@ -1,9 +1,13 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import type { Profile } from '@prisma/client';
   import { userStore } from '../stores';
+  import SearchableSelect from './SearchableSelect.svelte';
 
   export let parent: any;
   export let users: Profile[];
+
+  let selectValue = '';
 
   let profileId = $userStore.profile.id;
 </script>
@@ -13,14 +17,21 @@
     <header class="text-2xl font-bold">Nuova conversazione</header>
 
     <fieldset class="space-y-4 border border-surface-500 p-4 rounded-container-token">
-      <label class="label">
-        <span>Destinatario</span>
-        <select name="destinationId" class="select">
-          {#each users as user}
-            <option value={user.id}>{user.fullName}</option>
-          {/each}
-        </select>
-      </label>
+      {#if browser}
+        <label for="destinationId" class="label">
+          <span>Destinatario</span>
+          <SearchableSelect name="destinationId" items={users.map((u) => ({ label: u.fullName ?? '', value: u.id }))} />
+        </label>
+      {:else}
+        <label for="destinationId" class="label">
+          <span>Destinatario</span>
+          <select name="destinationId" class="select">
+            {#each users as user}
+              <option value={user.id}>{user.fullName}</option>
+            {/each}
+          </select>
+        </label>
+      {/if}
       <input type="hidden" name="test" value="true" />
       <input type="hidden" name="profileId" value={profileId} />
     </fieldset>

@@ -19,7 +19,8 @@
     ref: NewConversationForm,
     props: {
       users: data.users
-    }
+    },
+    slot: '<div>loading...</div>'
   };
   const modal: ModalSettings = {
     type: 'component',
@@ -62,6 +63,9 @@
       </a>
     {/each}
   {:else}
-    <div>Non ci sono messaggi</div>
+    <div>
+      <span>Non ci sono conversazioni.</span>
+      <button on:click={openNewConversationModal} class="anchor" type="button">Iniziane una!</button>
+    </div>
   {/if}
 </div>
