@@ -28,7 +28,7 @@
   });
 </script>
 
-<Toast position="t" />
+<Toast position="t" background="bg-primary-500" color="text-black" />
 <Modal />
 
 <svelte:head>
