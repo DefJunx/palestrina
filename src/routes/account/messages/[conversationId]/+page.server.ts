@@ -4,7 +4,6 @@ import { message, superValidate } from 'sveltekit-superforms/server';
 import { messageSchema } from './validation.schema';
 
 export async function load({ params: { conversationId }, locals: { prisma, supabase, getProfile, getUser } }) {
-  const form = await superValidate(messageSchema);
   const user = await getUser();
   const profile = await getProfile(user.id);
   const conversation = await prisma.conversation.findFirstOrThrow({
@@ -20,26 +19,26 @@ export async function load({ params: { conversationId }, locals: { prisma, supab
     await prisma.newMessageNotification.delete({ where: { id: notification.id } });
   }
 
-  const messages = await Promise.all(
-    (
-      await prisma.message.findMany({
-        where: { conversationId },
-        include: { sender: true },
-        orderBy: { createdAt: 'asc' }
-      })
-    ).map((m) => ({
+  const getMessages = async () => {
+    const messages = await prisma.message.findMany({
+      where: { conversationId },
+      include: { sender: true },
+      orderBy: { createdAt: 'asc' }
+    });
+
+    return messages.map((m) => ({
       ...m,
       sender: {
         ...m.sender,
         avatarSrc: getAvatarUrl(supabase, m.sender.avatarPath)
       }
-    }))
-  );
+    }));
+  };
 
   return {
-    messages,
+    messages: getMessages(),
     conversation,
-    form
+    form: superValidate(messageSchema)
   };
 }
 

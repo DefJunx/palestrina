@@ -26,13 +26,14 @@ export async function load({ url, locals: { getSession, supabase, prisma } }) {
     throw redirect(307, '/account');
   }
 
-  const loginForm = await superValidate(loginSchema, { id: 'loginForm' });
-  const registerForm = await superValidate(registerSchema, { id: 'registerForm' });
-  const forgotPasswordForm = await superValidate(forgotPasswordSchema, {
-    id: 'forgotPasswordForm'
-  });
-
-  return { url: url.origin, loginForm, registerForm, forgotPasswordForm };
+  return {
+    url: url.origin,
+    loginForm: superValidate(loginSchema, { id: 'loginForm' }),
+    registerForm: superValidate(registerSchema, { id: 'registerForm' }),
+    forgotPasswordForm: superValidate(forgotPasswordSchema, {
+      id: 'forgotPasswordForm'
+    })
+  };
 }
 
 export const actions = {

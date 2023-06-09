@@ -2,20 +2,18 @@ import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema';
 
-export async function load({ url, locals: { getProfile }, params: { profileId } }) {
-  const userProfile = await getProfile(profileId);
+export async function load({ url, parent }) {
+  const parentData = await parent();
   let data: Record<string, string> | undefined;
 
   if (!url.searchParams.has('new')) {
     data = {
-      username: userProfile.username ?? '',
-      fullName: userProfile.fullName ?? ''
+      username: parentData.profile.username ?? '',
+      fullName: parentData.profile.fullName ?? ''
     };
   }
 
-  const form = await superValidate(data, validationSchema);
-
-  return { form, avatarPath: userProfile.avatarPath };
+  return { form: superValidate(data, validationSchema), avatarPath: parentData.profile.avatarPath };
 }
 
 export const actions = {

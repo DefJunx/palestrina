@@ -2,18 +2,18 @@ import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema.js';
 
-export async function load({ locals: { getProfile }, params: { profileId } }) {
-  const userProfile = await getProfile(profileId);
+export async function load({ params: { profileId }, locals: { getProfile } }) {
+  const profile = await getProfile(profileId);
 
-  const form = await superValidate(
-    {
-      fitnessNotes: userProfile.fitnessNotes ?? '',
-      fitnessData: (userProfile.fitnessData as { label: string; value: string }[]) ?? []
-    },
-    validationSchema
-  );
-
-  return { form };
+  return {
+    form: superValidate(
+      {
+        fitnessNotes: profile.fitnessNotes ?? '',
+        fitnessData: (profile.fitnessData as { label: string; value: string }[]) ?? []
+      },
+      validationSchema
+    )
+  };
 }
 
 export const actions = {

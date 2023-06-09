@@ -21,7 +21,7 @@
   });
 
   const addParameter = () => {
-    $form.fitnessData = [...$form.fitnessData, { label: 'Nuovo parametro', value: '' }];
+    $form.fitnessData = [...$form.fitnessData, { label: '', value: '' }];
   };
 
   const removeParameter = (indexToRemove: number) => {

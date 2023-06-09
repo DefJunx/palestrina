@@ -7,29 +7,26 @@ export async function load({ locals: { getUser, getProfile, prisma, supabase } }
   const user = await getUser();
   const profile = await getProfile(user.id);
 
-  const conversations = prisma.conversation
-    .findMany({
+  const getConversations = async () => {
+    const conversations = await prisma.conversation.findMany({
       where: {
         participants: { some: { id: profile.id } }
       },
       include: {
         participants: true
       }
-    })
-    .then((conversations) => {
-      return conversations.map((c) => ({
-        ...c,
-        participants: c.participants.map((p) => ({ ...p, avatarSrc: getAvatarUrl(supabase, p.avatarPath) }))
-      }));
     });
 
-  const users = await prisma.profile.findMany({ where: { id: { not: profile.id } } });
-  const form = await superValidate(conversationSchema);
+    return conversations.map((c) => ({
+      ...c,
+      participants: c.participants.map((p) => ({ ...p, avatarSrc: getAvatarUrl(supabase, p.avatarPath) }))
+    }));
+  };
 
   return {
-    conversations,
-    users,
-    form
+    conversations: getConversations(),
+    users: prisma.profile.findMany({ where: { id: { not: profile.id } } }),
+    form: superValidate(conversationSchema)
   };
 }
 

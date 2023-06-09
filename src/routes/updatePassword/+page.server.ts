@@ -16,9 +16,7 @@ export async function load({ url, locals: { supabase } }) {
     throw error(500, authError.message);
   }
 
-  const form = await superValidate(updatePasswordSchema);
-
-  return { form };
+  return { form: superValidate(updatePasswordSchema) };
 }
 
 export const actions = {
