@@ -22,8 +22,8 @@ model Conversation {
 
 model NewMessageNotification {
   id             String @id @default(uuid())
-  conversationId String @unique
-  profileId      String @unique
+  conversationId String
+  profileId      String
 
   user         Profile      @relation(fields: [profileId], references: [id], onDelete: Cascade)
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)

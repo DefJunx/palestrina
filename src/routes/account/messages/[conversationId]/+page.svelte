@@ -2,7 +2,8 @@
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import { dateFormatter } from '$src/lib/client/dateFormatter';
-  import { Avatar, toastStore } from '@skeletonlabs/skeleton';
+  import Avatar from '$src/lib/components/Avatar.svelte';
+  import { toastStore } from '@skeletonlabs/skeleton';
   import { Send } from 'lucide-svelte';
   import { superForm } from 'sveltekit-superforms/client';
 
@@ -11,6 +12,7 @@
   const maxChars = 250;
   let typedChars = 0;
   let elemChat: HTMLElement;
+  let submitButton: HTMLButtonElement;
 
   $: typedChars = $form.message.length;
 
@@ -23,9 +25,28 @@
   function scrollChatBottom(behavior?: ScrollBehavior) {
     elemChat.scrollTo({ top: elemChat.scrollHeight, behavior });
   }
+
+  const handleKeydown = (
+    e: KeyboardEvent & {
+      currentTarget: EventTarget & HTMLTextAreaElement;
+    }
+  ) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submitButton.click();
+    }
+  };
 </script>
 
-<div class="my-8 grid h-full grid-rows-[1fr_auto] gap-1">
+<div class="grid h-full grid-rows-[auto_1fr_auto] gap-1">
+  <div class="bg-primary-400 p-4 text-black">
+    {#each data.conversation.participants.filter((p) => p.id !== data.profile.id) as participant}
+      <div class="flex gap-1">
+        <!-- <Avatar -->
+        <span>{participant.fullName}</span>
+      </div>
+    {/each}
+  </div>
   <div bind:this={elemChat} class="max-h-[70vh] space-y-4 overflow-y-auto p-4">
     {#each data.messages as message}
       <div class="py-2">
@@ -74,6 +95,7 @@
         class="resize-none border-0 bg-transparent ring-0"
         name="message"
         placeholder="Inserisci un messaggio"
+        on:keydown={handleKeydown}
         rows="1"
         on:keypress={(e) => {
           if (maxChars - typedChars === 0) {
@@ -94,6 +116,7 @@
       />
 
       <button
+        bind:this={submitButton}
         type="submit"
         class="variant-filled-primary"
         disabled={$form.message === '' || maxChars - typedChars === 0}
