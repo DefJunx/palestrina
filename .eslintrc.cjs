@@ -21,6 +21,12 @@ module.exports = {
       parserOptions: {
         parser: '@typescript-eslint/parser'
       }
+    },
+    {
+      files: ['**/*.d.ts'],
+      rules: {
+        'no-var': 'off'
+      }
     }
   ],
   rules: {

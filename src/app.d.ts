@@ -18,7 +18,6 @@ declare global {
     }
     // interface Platform {}
   }
-  // eslint-disable-next-line no-var
   var prisma: PrismaClient;
 }
 
