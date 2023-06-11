@@ -1,11 +1,13 @@
 <script lang="ts">
   import { browser } from '$app/environment';
+  import { enhance } from '$app/forms';
   import { page } from '$app/stores';
   import Avatar from '$src/lib/components/Avatar.svelte';
   import NewConversationForm from '$src/lib/components/NewConversationForm.svelte';
   import { userStore } from '$src/lib/stores';
   import { modalStore, toastStore, type ModalComponent, type ModalSettings } from '@skeletonlabs/skeleton';
-  import { ChevronRight, Plus } from 'lucide-svelte';
+  import { ChevronRight, Plus, Trash } from 'lucide-svelte';
+  import type { SubmitFunction } from './$types';
 
   export let data;
 
@@ -33,6 +35,31 @@
       modalStore.trigger(modal);
     }
   };
+
+  const submitDeleteConversation: SubmitFunction = async ({ cancel }) => {
+    const deleteConfirmed = await new Promise<boolean>((resolve) => {
+      const modal: ModalSettings = {
+        type: 'confirm',
+        title: 'Conferma',
+        body: 'Sei sicuro di voler cancellare la conversazione selezionata?',
+        response: (r: boolean) => {
+          resolve(r);
+        }
+      };
+      modalStore.trigger(modal);
+    }).then((r: boolean) => {
+      return r;
+    });
+
+    if (!deleteConfirmed) {
+      cancel();
+    }
+
+    return ({ update }) => {
+      toastStore.trigger({ message: 'Conversazione cancellata con sucesso' });
+      update();
+    };
+  };
 </script>
 
 <div class="flex items-center justify-between">
@@ -46,21 +73,29 @@
 <div class="mt-16 flex flex-col gap-2">
   {#if data.conversations.length}
     {#each data.conversations as conversation}
-      <a href={`/account/messages/${conversation.id}`}>
-        <div class="flex items-center gap-2 rounded-md bg-primary-500 p-2 text-black">
-          <div class="flex gap-1">
-            {#each conversation.participants as participant}
-              <Avatar src={participant.avatarSrc} alt={participant.fullName ?? 'Avatar Image'} width="w-12" />
-            {/each}
+      <div class="flex items-center gap-2">
+        <a class="grow" href={`/account/messages/${conversation.id}`}>
+          <div class="flex items-center gap-2 rounded-md bg-primary-500 p-2 text-black">
+            <div class="flex gap-1">
+              {#each conversation.participants as participant}
+                <Avatar src={participant.avatarSrc} alt={participant.fullName ?? 'Avatar Image'} width="w-12" />
+              {/each}
+            </div>
+            <div class="grow">
+              {conversation.participants.map((p) => (p.id === userProfileId ? 'Tu' : p.fullName)).join(', ')}
+            </div>
+            <div>
+              <ChevronRight />
+            </div>
           </div>
-          <div class="grow">
-            {conversation.participants.map((p) => (p.id === userProfileId ? 'Tu' : p.fullName)).join(', ')}
-          </div>
-          <div>
-            <ChevronRight />
-          </div>
-        </div>
-      </a>
+        </a>
+        <form action="?/deleteConversation" method="post" use:enhance={submitDeleteConversation}>
+          <input type="hidden" name="conversationId" value={conversation.id} />
+          <button type="submit">
+            <Trash />
+          </button>
+        </form>
+      </div>
     {/each}
   {:else}
     <div>

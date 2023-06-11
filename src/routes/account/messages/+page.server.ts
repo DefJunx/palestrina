@@ -1,5 +1,5 @@
 import { getAvatarUrl } from '$src/lib/server/utils';
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { conversationSchema } from './validation.schema';
 
@@ -31,7 +31,7 @@ export async function load({ locals: { getUser, getProfile, prisma, supabase } }
 }
 
 export const actions = {
-  createNewConversation: async ({ request }) => {
+  createNewConversation: async ({ request, locals: { prisma } }) => {
     const { destinationId, profileId } = Object.fromEntries(await request.formData()) as Record<string, string>;
 
     if (!profileId || !destinationId || profileId === '' || destinationId === '') {
@@ -43,5 +43,17 @@ export const actions = {
     });
 
     throw redirect(302, `/account/messages/${conversationId}`);
+  },
+  deleteConversation: async ({ request }) => {
+    const form = Object.fromEntries(await request.formData());
+    const { conversationId } = form;
+
+    if (!conversationId) {
+      throw error(500, 'Conversation ID unavailable');
+    }
+
+    await prisma.conversation.delete({ where: { id: conversationId as string } });
+
+    return {};
   }
 };
