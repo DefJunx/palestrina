@@ -1,10 +1,13 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { dateFormatter } from '$src/lib/client/dateFormatter';
+  import { dateFormatter } from '$src/lib/client/dateFormatter.js';
+  import pusherClient from '$src/lib/client/pusher';
   import Avatar from '$src/lib/components/Avatar.svelte';
+  import type { Message, Profile } from '@prisma/client';
   import { toastStore } from '@skeletonlabs/skeleton';
   import { Send } from 'lucide-svelte';
+  import { onMount } from 'svelte';
   import { superForm } from 'sveltekit-superforms/client';
 
   export let data;
@@ -36,13 +39,36 @@
       submitButton.click();
     }
   };
+
+  onMount(() => {
+    const chat = pusherClient.subscribe($page.params.conversationId);
+    chat.bind('new-message', (newMessage: Message & { sender: Profile & { avatarSrc: string } }) => {
+      console.log(newMessage);
+
+      if (newMessage.senderId === data.profile.id) {
+        return;
+      }
+
+      newMessage.createdAt = new Date(newMessage.createdAt);
+
+      data.messages = [...data.messages, newMessage];
+
+      setTimeout(() => {
+        scrollChatBottom('smooth');
+      }, 250);
+    });
+
+    return () => {
+      chat.unsubscribe();
+      chat.unbind('new-message');
+    };
+  });
 </script>
 
 <div class="grid h-full grid-rows-[auto_1fr_auto] gap-1">
   <div class="bg-primary-400 p-4 text-black">
     {#each data.conversation.participants.filter((p) => p.id !== data.profile.id) as participant}
       <div class="flex gap-1">
-        <!-- <Avatar -->
         <span>{participant.fullName}</span>
       </div>
     {/each}

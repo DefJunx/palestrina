@@ -12,3 +12,4 @@ TBD
 - Supabase
 - Tailwind
 - Skeleton UI
+- Pusher for realtime comunication

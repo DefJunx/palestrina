@@ -1,3 +1,4 @@
+import pusherServer from '$src/lib/server/pusher';
 import { getAvatarUrl } from '$src/lib/server/utils';
 import { fail } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
@@ -43,17 +44,18 @@ export async function load({ params: { conversationId }, locals: { prisma, supab
 }
 
 export const actions = {
-  sendMessage: async ({ request, params: { conversationId } }) => {
+  sendMessage: async ({ locals: { supabase }, request, params: { conversationId } }) => {
     const form = await superValidate(request, messageSchema);
 
     if (!form.valid) return fail(400, { form });
 
-    await prisma.message.create({
+    const newMessage = await prisma.message.create({
       data: {
         text: form.data.message,
         Conversation: { connect: { id: conversationId } },
         sender: { connect: { id: form.data.senderId } }
-      }
+      },
+      include: { sender: true }
     });
 
     await prisma.newMessageNotification.create({
@@ -62,6 +64,13 @@ export const actions = {
         profileId: form.data.receiverId
       }
     });
+
+    const pusherMessage = {
+      ...newMessage,
+      sender: { ...newMessage.sender, avatarSrc: getAvatarUrl(supabase, newMessage.sender.avatarPath) }
+    };
+
+    pusherServer.trigger(conversationId, 'new-message', { ...pusherMessage });
 
     return message(form, 'Messaggio inviato', { status: 200 });
   }
