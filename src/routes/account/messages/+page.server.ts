@@ -1,4 +1,4 @@
-import { getAvatarUrl } from '$src/lib/server/utils';
+import { getPublicBucketUrl } from '$src/lib/server/utils';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { conversationSchema } from './validation.schema';
@@ -19,7 +19,7 @@ export async function load({ locals: { getUser, getProfile, prisma, supabase } }
 
     return conversations.map((c) => ({
       ...c,
-      participants: c.participants.map((p) => ({ ...p, avatarSrc: getAvatarUrl(supabase, p.avatarPath) }))
+      participants: c.participants.map((p) => ({ ...p, avatarSrc: getPublicBucketUrl(supabase, p.avatarPath) }))
     }));
   };
 

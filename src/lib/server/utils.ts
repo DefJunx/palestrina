@@ -15,11 +15,15 @@ export function getAvatarFallbackfromName(fullName: string | null) {
   return initials.join('');
 }
 
-export function getAvatarUrl(supabase: SupabaseClient, avatarPath: string | null) {
+export function getPublicBucketUrl(
+  supabase: SupabaseClient,
+  avatarPath: string | null = null,
+  bucket: 'avatars' | 'exercise_videos' | 'exercise_photos' = 'avatars'
+) {
   if (!avatarPath) return '';
 
   try {
-    const { data: avatarUrl } = supabase.storage.from('avatars').getPublicUrl(avatarPath);
+    const { data: avatarUrl } = supabase.storage.from(bucket).getPublicUrl(avatarPath);
     return avatarUrl.publicUrl;
   } catch (error) {
     console.error(error);

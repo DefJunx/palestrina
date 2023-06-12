@@ -1,5 +1,5 @@
 import pusherServer from '$src/lib/server/pusher';
-import { getAvatarUrl } from '$src/lib/server/utils';
+import { getPublicBucketUrl } from '$src/lib/server/utils';
 import { fail } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { messageSchema } from './validation.schema';
@@ -31,7 +31,7 @@ export async function load({ params: { conversationId }, locals: { prisma, supab
       ...m,
       sender: {
         ...m.sender,
-        avatarSrc: getAvatarUrl(supabase, m.sender.avatarPath)
+        avatarSrc: getPublicBucketUrl(supabase, m.sender.avatarPath)
       }
     }));
   };
@@ -67,7 +67,7 @@ export const actions = {
 
     const pusherMessage = {
       ...newMessage,
-      sender: { ...newMessage.sender, avatarSrc: getAvatarUrl(supabase, newMessage.sender.avatarPath) }
+      sender: { ...newMessage.sender, avatarSrc: getPublicBucketUrl(supabase, newMessage.sender.avatarPath) }
     };
 
     pusherServer.trigger(conversationId, 'new-message', { ...pusherMessage });

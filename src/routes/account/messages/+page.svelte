@@ -47,17 +47,24 @@
         }
       };
       modalStore.trigger(modal);
-    }).then((r: boolean) => {
-      return r;
-    });
+    }).then((r: boolean) => r);
 
     if (!deleteConfirmed) {
       cancel();
     }
 
-    return ({ update }) => {
-      toastStore.trigger({ message: 'Conversazione cancellata con sucesso' });
-      update();
+    return ({ update, result }) => {
+      switch (result.type) {
+        case 'success':
+          toastStore.trigger({ message: 'Conversazione cancellata con sucesso' });
+          update();
+          break;
+        case 'error':
+          toastStore.trigger({ message: 'Si è verificato un errore imprevisto. Si prega di riprovare più tardi' });
+          break;
+        default:
+          throw new Error('unexpected case');
+      }
     };
   };
 </script>

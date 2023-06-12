@@ -1,4 +1,4 @@
-import { getAvatarFallbackfromName, getAvatarUrl, handleLoginRedirect } from '$src/lib/server/utils';
+import { getAvatarFallbackfromName, getPublicBucketUrl, handleLoginRedirect } from '$src/lib/server/utils';
 import { redirect } from '@sveltejs/kit';
 
 export async function load(event) {
@@ -15,7 +15,7 @@ export async function load(event) {
   return {
     profile,
     fitnessData,
-    avatarSrc: getAvatarUrl(event.locals.supabase, profile.avatarPath),
+    avatarSrc: getPublicBucketUrl(event.locals.supabase, profile.avatarPath),
     avatarFallback: getAvatarFallbackfromName(profile.fullName),
     newMessageCount
   };
