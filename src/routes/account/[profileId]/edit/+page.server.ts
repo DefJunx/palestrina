@@ -17,11 +17,11 @@ export async function load({ url, parent }) {
 }
 
 export const actions = {
-  default: async ({ request, params: { profileId }, locals: { supabase, prisma } }) => {
+  default: async ({ request, params: { profileId }, locals: { prisma } }) => {
     const formData = await request.formData();
 
     const form = await superValidate(formData, validationSchema);
-    let avatar_path: string = formData.get('originalPath') as string;
+    // let avatar_path: string = formData.get('originalPath') as string;
 
     if (!form.valid) {
       // Again, always return { form } and things will just work.
@@ -32,35 +32,35 @@ export const actions = {
       data: { fullName, username }
     } = form;
 
-    const avatar = formData.get('avatar');
+    // const avatar = formData.get('avatar');
 
-    if (avatar && avatar instanceof File && avatar.size > 0) {
-      try {
-        const { error: removeError } = await supabase.storage.from('avatars').remove([avatar_path]);
+    // if (avatar && avatar instanceof File && avatar.size > 0) {
+    //   try {
+    //     const { error: removeError } = await supabase.storage.from('avatars').remove([avatar_path]);
 
-        if (removeError) {
-          throw new Error('error removing old avatar');
-        }
+    //     if (removeError) {
+    //       throw new Error('error removing old avatar');
+    //     }
 
-        const { data: avatarData, error: avatarError } = await supabase.storage
-          .from('avatars')
-          .upload(`${profileId}_${new Date().getTime()}`, avatar, {
-            cacheControl: '60',
-            upsert: true,
-            contentType: avatar.type
-          });
+    //     const { data: avatarData, error: avatarError } = await supabase.storage
+    //       .from('avatars')
+    //       .upload(`${profileId}_${new Date().getTime()}`, avatar, {
+    //         cacheControl: '60',
+    //         upsert: true,
+    //         contentType: avatar.type
+    //       });
 
-        if (avatarError) {
-          console.error(avatarError);
-        }
+    //     if (avatarError) {
+    //       console.error(avatarError);
+    //     }
 
-        if (avatarData) {
-          avatar_path = avatarData.path;
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    //     if (avatarData) {
+    //       avatar_path = avatarData.path;
+    //     }
+    //   } catch (e) {
+    //     console.error(e);
+    //   }
+    // }
 
     try {
       await prisma.profile.update({
@@ -68,8 +68,8 @@ export const actions = {
         data: {
           hasCompiled: true,
           fullName,
-          username,
-          avatarPath: avatar_path
+          username
+          // avatarPath: avatar_path
         }
       });
     } catch (e) {

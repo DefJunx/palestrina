@@ -1,12 +1,16 @@
 import pusherServer from '$src/lib/server/pusher';
-import { getPublicBucketUrl } from '$src/lib/server/utils';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { messageSchema } from './validation.schema';
 
-export async function load({ params: { conversationId }, locals: { prisma, supabase, getProfile, getUser } }) {
-  const user = await getUser();
-  const profile = await getProfile(user.id);
+export async function load({ params: { conversationId }, locals: { prisma, authRequest, getProfile } }) {
+  const { user, session } = await authRequest.validateUser();
+
+  if (!user || !session) {
+    throw redirect(302, '/');
+  }
+
+  const profile = await getProfile(user.userId);
   const conversation = await prisma.conversation.findFirstOrThrow({
     where: { id: conversationId },
     include: { participants: true }
@@ -27,11 +31,12 @@ export async function load({ params: { conversationId }, locals: { prisma, supab
       orderBy: { createdAt: 'asc' }
     });
 
+    // TODO: getPublicBucketUrl(supabase, m.sender.avatarPath)
     return messages.map((m) => ({
       ...m,
       sender: {
         ...m.sender,
-        avatarSrc: getPublicBucketUrl(supabase, m.sender.avatarPath)
+        avatarSrc: ''
       }
     }));
   };
@@ -44,7 +49,7 @@ export async function load({ params: { conversationId }, locals: { prisma, supab
 }
 
 export const actions = {
-  sendMessage: async ({ locals: { supabase }, request, params: { conversationId } }) => {
+  sendMessage: async ({ locals: { prisma }, request, params: { conversationId } }) => {
     const form = await superValidate(request, messageSchema);
 
     if (!form.valid) return fail(400, { form });
@@ -58,16 +63,17 @@ export const actions = {
       include: { sender: true }
     });
 
-    await prisma.newMessageNotification.create({
+    await __prisma.newMessageNotification.create({
       data: {
         conversationId,
         profileId: form.data.receiverId
       }
     });
 
+    // TODO: getPublicBucketUrl(supabase, newMessage.sender.avatarPath)
     const pusherMessage = {
       ...newMessage,
-      sender: { ...newMessage.sender, avatarSrc: getPublicBucketUrl(supabase, newMessage.sender.avatarPath) }
+      sender: { ...newMessage.sender, avatarSrc: '' }
     };
 
     pusherServer.trigger(conversationId, 'new-message', { ...pusherMessage });

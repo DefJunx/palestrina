@@ -1,21 +1,19 @@
-import { getAvatarFallbackfromName, getPublicBucketUrl, handleLoginRedirect } from '$src/lib/server/utils';
+import { getAvatarFallbackfromName, handleLoginRedirect } from '$src/lib/server/utils';
 import { redirect } from '@sveltejs/kit';
 
-export async function load(event) {
-  const session = await event.locals.getSession();
+export async function load({ locals: { authRequest, getProfile, prisma }, url }) {
+  const { user, session } = await authRequest.validateUser();
 
-  if (!session) throw redirect(302, handleLoginRedirect(event));
+  if (!session || !user) throw redirect(302, handleLoginRedirect(url));
 
-  const user = await event.locals.getUser();
-
-  const profile = await event.locals.getProfile(user.id);
+  const profile = await getProfile(user.userId);
   const fitnessData = (profile.fitnessData as { label: string; value: string }[]) ?? [];
   const newMessageCount = (await prisma.newMessageNotification.findMany({ where: { profileId: profile.id } })).length;
 
   return {
     profile,
     fitnessData,
-    avatarSrc: getPublicBucketUrl(event.locals.supabase, profile.avatarPath),
+    avatarSrc: '', // getPublicBucketUrl(supabase, profile.avatarPath),
     avatarFallback: getAvatarFallbackfromName(profile.fullName),
     newMessageCount
   };

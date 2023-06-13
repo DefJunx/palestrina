@@ -4,7 +4,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { v4 as uuidv4 } from 'uuid';
 import { newExerciseSchema } from './validation.schema';
 
-export async function load({ params: { exerciseId } }) {
+export async function load({ params: { exerciseId }, locals: { prisma } }) {
   if (exerciseId === 'new') {
     return { form: superValidate(newExerciseSchema) };
   }
@@ -15,7 +15,7 @@ export async function load({ params: { exerciseId } }) {
 }
 
 export const actions = {
-  createExercise: async ({ request, locals: { supabase, prisma } }) => {
+  createExercise: async ({ request, locals: { prisma } }) => {
     const formData = await request.formData();
     const form = await superValidate(formData, newExerciseSchema);
     let videoPath: string | undefined;
@@ -27,40 +27,40 @@ export const actions = {
 
     const exerciseId = uuidv4();
 
-    const photo = formData.get('photo')?.valueOf() as File;
-    const video = formData.get('video')?.valueOf() as File;
+    // const photo = formData.get('photo')?.valueOf() as File;
+    // const video = formData.get('video')?.valueOf() as File;
 
-    if (photo.size !== 0) {
-      const { data: photoData, error: photoError } = await supabase.storage
-        .from('exercise_photos')
-        .upload(`${exerciseId}`, photo, { cacheControl: '60', upsert: true, contentType: photo.type });
+    // if (photo.size !== 0) {
+    //   const { data: photoData, error: photoError } = await supabase.storage
+    //     .from('exercise_photos')
+    //     .upload(`${exerciseId}`, photo, { cacheControl: '60', upsert: true, contentType: photo.type });
 
-      if (photoError) {
-        console.log('photoError', photoError);
-        captureException(photoError);
-      }
+    //   if (photoError) {
+    //     console.log('photoError', photoError);
+    //     captureException(photoError);
+    //   }
 
-      photoPath = photoData?.path;
-    }
+    //   photoPath = photoData?.path;
+    // }
 
-    if (video.size !== 0) {
-      const { data: videoData, error: videoError } = await supabase.storage
-        .from('exercise_videos')
-        .upload(`${exerciseId}`, video, { cacheControl: '60', upsert: true, contentType: video.type });
+    // if (video.size !== 0) {
+    //   const { data: videoData, error: videoError } = await supabase.storage
+    //     .from('exercise_videos')
+    //     .upload(`${exerciseId}`, video, { cacheControl: '60', upsert: true, contentType: video.type });
 
-      if (videoError) {
-        console.log('videoError', videoError);
-        captureException(videoError);
-      }
+    //   if (videoError) {
+    //     console.log('videoError', videoError);
+    //     captureException(videoError);
+    //   }
 
-      videoPath = videoData?.path;
-    }
+    //   videoPath = videoData?.path;
+    // }
 
     await prisma.exercise.create({ data: { id: exerciseId, name: form.data.name, photoPath, videoPath } });
 
     return { form };
   },
-  editExercise: async ({ request, locals: { supabase, prisma }, params: { exerciseId } }) => {
+  editExercise: async ({ request, locals: { prisma }, params: { exerciseId } }) => {
     const formData = await request.formData();
     const form = await superValidate(formData, newExerciseSchema);
     let photoPath: string | undefined;
@@ -70,34 +70,34 @@ export const actions = {
       return fail(400, { form });
     }
 
-    const photo = formData.get('photo')?.valueOf() as File;
-    const video = formData.get('video')?.valueOf() as File;
+    // const photo = formData.get('photo')?.valueOf() as File;
+    // const video = formData.get('video')?.valueOf() as File;
 
-    if (photo.size !== 0) {
-      const { data: photoData, error: photoError } = await supabase.storage
-        .from('exercise_photos')
-        .upload(`${exerciseId}`, photo, { cacheControl: '60', upsert: true, contentType: photo.type });
+    // if (photo.size !== 0) {
+    //   const { data: photoData, error: photoError } = await supabase.storage
+    //     .from('exercise_photos')
+    //     .upload(`${exerciseId}`, photo, { cacheControl: '60', upsert: true, contentType: photo.type });
 
-      if (photoError) {
-        console.log('photoError', photoError);
-        captureException(photoError);
-      }
+    //   if (photoError) {
+    //     console.log('photoError', photoError);
+    //     captureException(photoError);
+    //   }
 
-      photoPath = photoData?.path;
-    }
+    //   photoPath = photoData?.path;
+    // }
 
-    if (video.size !== 0) {
-      const { data: videoData, error: videoError } = await supabase.storage
-        .from('exercise_videos')
-        .upload(`${exerciseId}`, video, { cacheControl: '60', upsert: true, contentType: video.type });
+    // if (video.size !== 0) {
+    //   const { data: videoData, error: videoError } = await supabase.storage
+    //     .from('exercise_videos')
+    //     .upload(`${exerciseId}`, video, { cacheControl: '60', upsert: true, contentType: video.type });
 
-      if (videoError) {
-        console.log('videoError', videoError);
-        captureException(videoError);
-      }
+    //   if (videoError) {
+    //     console.log('videoError', videoError);
+    //     captureException(videoError);
+    //   }
 
-      videoPath = videoData?.path;
-    }
+    //   videoPath = videoData?.path;
+    // }
 
     await prisma.exercise.update({
       where: { id: exerciseId },

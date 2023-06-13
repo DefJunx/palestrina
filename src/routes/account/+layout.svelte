@@ -28,11 +28,9 @@
     });
   }
 
-  $: ({ avatarSrc, avatarFallback, supabase, session, profile } = data);
+  $: ({ avatarSrc, avatarFallback, profile } = data);
 
   $: if (browser) userStore.set({ profile, avatarInitials: avatarFallback, avatarSrc });
-
-  $: if (!session) goto('/');
 
   function drawerOpen(): void {
     if (browser) drawerStore.open();
@@ -42,10 +40,6 @@
 
   function goToMessages() {
     goto('/account/messages');
-  }
-
-  async function logout() {
-    await supabase.auth.signOut();
   }
 </script>
 
@@ -60,10 +54,12 @@
       <span>Messaggi</span>
     </button>
     <hr />
-    <button class="flex flex-row items-center gap-x-2" on:click={logout}>
-      <LogOut class="block" />
-      <span>Logout</span>
-    </button>
+    <form action="/logout" method="post">
+      <button type="submit" class="flex flex-row items-center gap-x-2">
+        <LogOut class="block" />
+        <span>Logout</span>
+      </button>
+    </form>
   </div>
   <div class="arrow bg-surface-100-800-token" />
 </div>
@@ -81,9 +77,11 @@
         <button class="btn-icon block md:hidden" on:click={goToMessages}>
           <Mail />
         </button>
-        <button class="btn-icon block md:hidden" on:click={logout}>
-          <LogOut class="block" />
-        </button>
+        <form action="/logout" method="post">
+          <button class="btn-icon block md:hidden">
+            <LogOut class="block" />
+          </button>
+        </form>
         <button type="button" class="btn-icon hidden md:block" use:popup={userPopup}>
           <Avatar
             class="hidden md:block"

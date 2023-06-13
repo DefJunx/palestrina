@@ -1,11 +1,15 @@
-import { getPublicBucketUrl } from '$src/lib/server/utils';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { conversationSchema } from './validation.schema';
 
-export async function load({ locals: { getUser, getProfile, prisma, supabase } }) {
-  const user = await getUser();
-  const profile = await getProfile(user.id);
+export async function load({ locals: { getProfile, prisma, authRequest } }) {
+  const { user } = await authRequest.validateUser();
+
+  if (!user) {
+    throw redirect(302, '/');
+  }
+
+  const profile = await getProfile(user.userId);
 
   const getConversations = async () => {
     const conversations = await prisma.conversation.findMany({
@@ -17,9 +21,10 @@ export async function load({ locals: { getUser, getProfile, prisma, supabase } }
       }
     });
 
+    // TODO: getPublicBucketUrl(supabase, p.avatarPath)
     return conversations.map((c) => ({
       ...c,
-      participants: c.participants.map((p) => ({ ...p, avatarSrc: getPublicBucketUrl(supabase, p.avatarPath) }))
+      participants: c.participants.map((p) => ({ ...p, avatarSrc: '' }))
     }));
   };
 
@@ -52,7 +57,7 @@ export const actions = {
       throw error(500, 'Conversation ID unavailable');
     }
 
-    await prisma.conversation.delete({ where: { id: conversationId as string } });
+    await __prisma.conversation.delete({ where: { id: conversationId as string } });
 
     return {};
   }

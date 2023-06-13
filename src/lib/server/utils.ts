@@ -1,8 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { RequestEvent } from '@sveltejs/kit';
 
-export function handleLoginRedirect(event: RequestEvent) {
-  const redirectTo = event.url.pathname + event.url.search;
+export function handleLoginRedirect(url: URL) {
+  const redirectTo = url.pathname + url.search;
 
   return `/?redirectTo=${redirectTo}`;
 }

@@ -1,11 +1,12 @@
+import { env } from '$env/dynamic/private';
 import { DEBUG_PRISMA } from '$env/static/private';
 import { PrismaClient } from '@prisma/client';
 
-const prismaClient =
-  global.prisma || new PrismaClient({ log: DEBUG_PRISMA === 'true' ? ['query', 'info', 'warn', 'error'] : [] });
+const prisma =
+  global.__prisma || new PrismaClient({ log: DEBUG_PRISMA === 'true' ? ['query', 'info', 'warn', 'error'] : [] });
 
-if (process.env.NODE_ENV === 'development') {
-  global.prisma = prismaClient;
+if (env.NODE_ENV === 'development') {
+  global.__prisma = prisma;
 }
 
-export default prismaClient;
+export default prisma;

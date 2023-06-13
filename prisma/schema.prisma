@@ -8,6 +8,40 @@ datasource db {
   relationMode = "prisma"
 }
 
+model AuthUser {
+  id           String        @id @unique
+  auth_session AuthSession[]
+  auth_key     AuthKey[]
+
+  email   String   @unique
+  Profile Profile?
+
+  @@map("auth_user")
+}
+
+model AuthKey {
+  id              String   @id @unique
+  hashed_password String?
+  user_id         String
+  primary_key     Boolean
+  expires         BigInt?
+  auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_key")
+}
+
+model AuthSession {
+  id             String   @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_session")
+}
+
 model Conversation {
   id String @id @default(uuid())
 
@@ -18,6 +52,8 @@ model Conversation {
 
   messages               Message[]
   NewMessageNotification NewMessageNotification[]
+
+  @@map("conversations")
 }
 
 model NewMessageNotification {
@@ -30,6 +66,7 @@ model NewMessageNotification {
 
   @@index([conversationId])
   @@index([profileId])
+  @@map("new_message_notifications")
 }
 
 model Message {
@@ -47,6 +84,7 @@ model Message {
 
   @@index([conversationId])
   @@index([senderId])
+  @@map("messages")
 }
 
 model Exercise {
@@ -60,6 +98,8 @@ model Exercise {
   updatedAt DateTime @updatedAt
 
   trainingProgram TrainingProgram[]
+
+  @@map("exercises")
 }
 
 model TrainingProgram {
@@ -75,11 +115,13 @@ model TrainingProgram {
   profileId String
 
   Exercise Exercise[]
+
+  @@map("training_programs")
 }
 
 model Profile {
-  id     String @id @default(uuid())
-  userId String @unique
+  id         String @id @default(uuid())
+  authUserId String @unique
 
   username     String?
   fullName     String?
@@ -92,12 +134,12 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  conversations Conversation[]
-
+  user                   AuthUser                 @relation(fields: [authUserId], references: [id], onDelete: Cascade)
+  conversations          Conversation[]
   sentMessages           Message[]                @relation("messageSender")
   newMessageNotification NewMessageNotification[]
 
-  @@index([userId])
+  @@map("profiles")
 }
 
 enum UserRole {

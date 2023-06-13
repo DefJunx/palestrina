@@ -1,24 +1,29 @@
 import type { PrismaClient, Profile } from '@prisma/client';
-import { Session, SupabaseClient, type User } from '@supabase/supabase-js';
-import type { Database } from './types/database.types';
 
 declare global {
   namespace App {
     // interface Error {}
     interface Locals {
-      supabase: SupabaseClient<Database>;
       prisma: PrismaClient;
-      getSession(): Promise<Session | null>;
-      getUser(): Promise<User>;
+
       getProfile(profileOrUserId: string): Promise<Profile>;
+      authRequest: import('lucia-auth').AuthRequest;
     }
     interface PageData {
-      session: Session | null;
       profile: Profile;
     }
     // interface Platform {}
   }
-  var prisma: PrismaClient;
+
+  /// <reference types="lucia-auth" />
+  namespace Lucia {
+    type Auth = import('$lib/server/lucia').Auth;
+    type UserAttributes = {
+      email: string;
+    };
+  }
+
+  var __prisma: PrismaClient;
 }
 
 export {};

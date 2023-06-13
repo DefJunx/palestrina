@@ -1,29 +1,13 @@
-import { error, fail, redirect } from '@sveltejs/kit';
+import { EMAIL_PASSWORD_PROVIDER_ID, auth } from '$src/lib/server/lucia.js';
+import { fail, redirect } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import { forgotPasswordSchema, loginSchema, registerSchema } from './validation.schema.js';
 
-export async function load({ url, locals: { getSession, supabase, prisma } }) {
-  const session = await getSession();
+export async function load({ url, locals: { authRequest } }) {
+  const { session } = await authRequest.validateUser();
 
   if (session) {
     throw redirect(303, '/account');
-  }
-
-  const code = url.searchParams.get('code') ?? '';
-
-  if (code) {
-    const {
-      data: { user },
-      error: authError
-    } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (authError || !user) {
-      throw error(500, authError?.message ?? 'Unexpected authentication error');
-    }
-
-    await prisma.profile.create({ data: { userId: user.id } });
-
-    throw redirect(307, '/account');
   }
 
   return {
@@ -37,7 +21,7 @@ export async function load({ url, locals: { getSession, supabase, prisma } }) {
 }
 
 export const actions = {
-  login: async ({ request, locals: { supabase }, url }) => {
+  login: async ({ request, locals: { authRequest }, url }) => {
     const loginForm = await superValidate(request, loginSchema, { id: 'loginForm' });
 
     if (!loginForm.valid) return fail(400, { loginForm });
@@ -46,15 +30,17 @@ export const actions = {
       data: { email, password }
     } = loginForm;
 
-    const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (loginError) {
-      return message(loginForm, loginError.message, { status: 400 });
+    try {
+      const key = await auth.useKey(EMAIL_PASSWORD_PROVIDER_ID, email, password);
+      const session = await auth.createSession(key.userId);
+      authRequest.setSession(session);
+    } catch (e) {
+      return message(loginForm, 'Login fallito. Si prega di riprovare più tardi', { status: 500 });
     }
 
     throw redirect(303, url.searchParams.get('redirectTo') ?? '/account');
   },
-  register: async ({ request, locals: { supabase } }) => {
+  register: async ({ request, locals: { authRequest, prisma } }) => {
     const registerForm = await superValidate(request, registerSchema, { id: 'registerForm' });
 
     if (!registerForm.valid) return fail(400, { registerForm });
@@ -63,35 +49,51 @@ export const actions = {
       data: { email, password }
     } = registerForm;
 
-    const { error: registerError } = await supabase.auth.signUp({ email, password });
+    try {
+      const user = await auth.createUser({
+        primaryKey: {
+          providerId: EMAIL_PASSWORD_PROVIDER_ID,
+          providerUserId: email,
+          password
+        },
+        attributes: {
+          email
+        }
+      });
+      const session = await auth.createSession(user.userId);
 
-    if (registerError) {
-      console.log(registerError);
+      authRequest.setSession(session);
 
+      await prisma.profile.create({ data: { authUserId: user.userId } });
+    } catch {
       return message(registerForm, 'There was an error in registration', { status: 400 });
     }
 
-    return message(registerForm, 'Controlla il tuo indirizzo email');
+    throw redirect(302, '/account');
   },
-  forgotPassword: async ({ request, locals: { supabase }, url }) => {
+  forgotPassword: async ({ request }) => {
     const forgotPasswordForm = await superValidate(request, forgotPasswordSchema, {
       id: 'forgotPasswordForm'
     });
 
     if (!forgotPasswordForm.valid) return fail(400, { forgotPasswordForm });
 
-    const {
-      data: { email }
-    } = forgotPasswordForm;
+    try {
+      const {
+        data: { email }
+      } = forgotPasswordForm;
 
-    const { error: forgotPasswordError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${url.origin}/updatePassword`
-    });
+      const [sessionId] = await auth.generateSessionId();
 
-    if (forgotPasswordError) {
-      return message(forgotPasswordForm, forgotPasswordError.message, { status: 400 });
+      // TODO: send sessionId to user and then validateSession on an endpoint
+
+      return message(forgotPasswordForm, 'Controlla il tuo indirizzo email');
+    } catch {
+      return message(
+        forgotPasswordForm,
+        'Si è verificato un errore nel reset della password. Si prega di riprovare più tardi',
+        { status: 500 }
+      );
     }
-
-    return message(forgotPasswordForm, 'Controlla il tuo indirizzo email');
   }
 };
