@@ -11,7 +11,7 @@
     invalidateAll: false
   });
 
-  let previewSrc = $userStore.avatarSrc;
+  let previewSrc = $userStore.profile.avatarPath;
   let avatarAlt = $form.username ?? '';
 
   const previewAvatar = async (

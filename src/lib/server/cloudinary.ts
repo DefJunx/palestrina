@@ -10,35 +10,36 @@ cloudinary.config({
   secure: true
 });
 
+const uploadFile = (path: string, buffer: Buffer, resourceType?: 'image' | 'video' | 'raw' | 'auto') =>
+  new Promise<UploadApiResponse>((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream({ resource_type: resourceType, public_id: path, invalidate: true }, onDone)
+      .end(buffer);
+
+    function onDone(error?: UploadApiErrorResponse, result?: UploadApiResponse) {
+      if (error) {
+        return reject(error);
+      }
+
+      if (result) {
+        return resolve(result);
+      }
+
+      return null;
+    }
+  });
+
 export default cloudinary;
 
 export const AVATARS_SUBFOLDER = 'avatars';
 
 export async function uploadAvatar(avatarFile: File, userId: string): Promise<UploadApiResponse | null> {
-  const cloudinaryPath = `${AVATARS_SUBFOLDER}/${userId}`;
+  const path = `${AVATARS_SUBFOLDER}/${userId}`;
   const arrayBuffer = await avatarFile.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
-  const uploadFunction = () =>
-    new Promise<UploadApiResponse>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream({ resource_type: 'image', public_id: cloudinaryPath, invalidate: true }, onDone)
-        .end(buffer);
-
-      function onDone(error?: UploadApiErrorResponse, result?: UploadApiResponse) {
-        if (error) {
-          return reject(error);
-        }
-
-        if (result) {
-          return resolve(result);
-        }
-
-        return null;
-      }
-    });
 
   try {
-    return await uploadFunction();
+    return await uploadFile(path, buffer, 'image');
   } catch (e) {
     captureException(e);
     return null;
