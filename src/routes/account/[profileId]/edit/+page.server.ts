@@ -1,4 +1,4 @@
-import cloudinary, { uploadAvatar } from '$src/lib/server/cloudinary';
+import { uploadAvatar } from '$src/lib/server/cloudinary';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema';
@@ -42,11 +42,7 @@ export const actions = {
         throw new Error('User not found');
       }
 
-      const cloudinaryResponse = await uploadAvatar(avatar, user.userId);
-
-      if (cloudinaryResponse) {
-        avatarPath = cloudinary.url(cloudinaryResponse.public_id, { version: cloudinaryResponse.version });
-      }
+      avatarPath = await uploadAvatar(avatar, user.userId);
     }
 
     try {

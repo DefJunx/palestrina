@@ -33,15 +33,16 @@ export default cloudinary;
 
 export const AVATARS_SUBFOLDER = 'avatars';
 
-export async function uploadAvatar(avatarFile: File, userId: string): Promise<UploadApiResponse | null> {
+export async function uploadAvatar(avatarFile: File, userId: string): Promise<string | undefined> {
   const path = `${AVATARS_SUBFOLDER}/${userId}`;
   const arrayBuffer = await avatarFile.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
   try {
-    return await uploadFile(path, buffer, 'image');
+    const cloudinaryResponse = await uploadFile(path, buffer, 'image');
+    return cloudinary.url(cloudinaryResponse.public_id, { version: cloudinaryResponse.version });
   } catch (e) {
     captureException(e);
-    return null;
+    return undefined;
   }
 }
