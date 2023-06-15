@@ -9,7 +9,8 @@ TBD
 ## Tech Stack
 
 - Sveltekit
-- Supabase
+- Planetscale as DB
+- Cloudinary for assets
 - Tailwind
 - Skeleton UI
 - Pusher for realtime comunication
