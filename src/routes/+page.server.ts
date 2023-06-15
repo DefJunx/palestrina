@@ -35,6 +35,8 @@ export const actions = {
       const session = await auth.createSession(key.userId);
       authRequest.setSession(session);
     } catch (e) {
+      console.log(e);
+
       return message(loginForm, 'Login fallito. Si prega di riprovare più tardi', { status: 500 });
     }
 
@@ -65,7 +67,9 @@ export const actions = {
       authRequest.setSession(session);
 
       await prisma.profile.create({ data: { authUserId: user.userId } });
-    } catch {
+    } catch (e) {
+      console.log(e);
+
       return message(registerForm, 'There was an error in registration', { status: 400 });
     }
 

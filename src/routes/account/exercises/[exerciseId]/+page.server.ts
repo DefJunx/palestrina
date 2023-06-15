@@ -1,4 +1,3 @@
-import { captureException } from '@sentry/sveltekit';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +26,7 @@ export const actions = {
 
     const exerciseId = uuidv4();
 
+    // TODO
     // const photo = formData.get('photo')?.valueOf() as File;
     // const video = formData.get('video')?.valueOf() as File;
 

@@ -19,7 +19,7 @@
     <div class="flex items-center gap-x-8">
       <Avatar
         width="w-32"
-        bind:src={$userStore.avatarSrc}
+        bind:src={$userStore.profile.avatarPath}
         alt={data.profile.username ?? undefined}
         bind:initials={$userStore.avatarInitials}
       />

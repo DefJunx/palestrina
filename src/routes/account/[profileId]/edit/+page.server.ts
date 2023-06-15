@@ -1,3 +1,4 @@
+import cloudinary, { uploadAvatar } from '$src/lib/server/cloudinary';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { validationSchema } from './validation.schema';
@@ -17,11 +18,11 @@ export async function load({ url, parent }) {
 }
 
 export const actions = {
-  default: async ({ request, params: { profileId }, locals: { prisma } }) => {
+  default: async ({ request, params: { profileId }, locals: { prisma, authRequest } }) => {
     const formData = await request.formData();
 
     const form = await superValidate(formData, validationSchema);
-    // let avatar_path: string = formData.get('originalPath') as string;
+    let avatarPath: string | undefined;
 
     if (!form.valid) {
       // Again, always return { form } and things will just work.
@@ -32,35 +33,21 @@ export const actions = {
       data: { fullName, username }
     } = form;
 
-    // const avatar = formData.get('avatar');
+    const avatar = formData.get('avatar')?.valueOf() as File;
 
-    // if (avatar && avatar instanceof File && avatar.size > 0) {
-    //   try {
-    //     const { error: removeError } = await supabase.storage.from('avatars').remove([avatar_path]);
+    if (avatar.size !== 0) {
+      const { user } = await authRequest.validateUser();
 
-    //     if (removeError) {
-    //       throw new Error('error removing old avatar');
-    //     }
+      if (!user) {
+        throw new Error('User not found');
+      }
 
-    //     const { data: avatarData, error: avatarError } = await supabase.storage
-    //       .from('avatars')
-    //       .upload(`${profileId}_${new Date().getTime()}`, avatar, {
-    //         cacheControl: '60',
-    //         upsert: true,
-    //         contentType: avatar.type
-    //       });
+      const cloudinaryResponse = await uploadAvatar(avatar, user.userId);
 
-    //     if (avatarError) {
-    //       console.error(avatarError);
-    //     }
-
-    //     if (avatarData) {
-    //       avatar_path = avatarData.path;
-    //     }
-    //   } catch (e) {
-    //     console.error(e);
-    //   }
-    // }
+      if (cloudinaryResponse) {
+        avatarPath = cloudinary.url(cloudinaryResponse.public_id, { version: cloudinaryResponse.version });
+      }
+    }
 
     try {
       await prisma.profile.update({
@@ -68,8 +55,8 @@ export const actions = {
         data: {
           hasCompiled: true,
           fullName,
-          username
-          // avatarPath: avatar_path
+          username,
+          ...(avatarPath ? { avatarPath } : {})
         }
       });
     } catch (e) {

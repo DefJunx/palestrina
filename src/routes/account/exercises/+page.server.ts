@@ -26,6 +26,7 @@ export const actions = {
     // const { photoPath, videoPath } =
     await prisma.exercise.delete({ where: { id: exerciseId as string } });
 
+    // TODO
     // if (photoPath) {
     //   const { error: photoError } = await supabase.storage.from('exercise_photos').remove([photoPath]);
 

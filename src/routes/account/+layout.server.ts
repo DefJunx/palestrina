@@ -13,7 +13,6 @@ export async function load({ locals: { authRequest, getProfile, prisma }, url })
   return {
     profile,
     fitnessData,
-    avatarSrc: '', // getPublicBucketUrl(supabase, profile.avatarPath),
     avatarFallback: getAvatarFallbackfromName(profile.fullName),
     newMessageCount
   };

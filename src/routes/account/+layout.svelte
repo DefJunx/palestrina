@@ -28,9 +28,9 @@
     });
   }
 
-  $: ({ avatarSrc, avatarFallback, profile } = data);
+  $: ({ avatarFallback, profile } = data);
 
-  $: if (browser) userStore.set({ profile, avatarInitials: avatarFallback, avatarSrc });
+  $: if (browser) userStore.set({ profile, avatarInitials: avatarFallback });
 
   function drawerOpen(): void {
     if (browser) drawerStore.open();
@@ -85,7 +85,7 @@
         <button type="button" class="btn-icon hidden md:block" use:popup={userPopup}>
           <Avatar
             class="hidden md:block"
-            bind:src={$userStore.avatarSrc}
+            bind:src={$userStore.profile.avatarPath}
             bind:initials={$userStore.avatarInitials}
             width="w-10"
           />
