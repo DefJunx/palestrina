@@ -57,10 +57,9 @@ export const actions = {
       }
     });
 
-    // TODO: getPublicBucketUrl(supabase, newMessage.sender.avatarPath)
     const pusherMessage = {
       ...newMessage,
-      sender: { ...newMessage.sender, avatarSrc: '' }
+      sender: newMessage.sender
     };
 
     pusherServer.trigger(conversationId, 'new-message', { ...pusherMessage });
