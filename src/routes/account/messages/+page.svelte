@@ -85,7 +85,7 @@
           <div class="flex items-center gap-2 rounded-md bg-primary-500 p-2 text-black">
             <div class="flex gap-1">
               {#each conversation.participants as participant}
-                <Avatar src={participant.avatarSrc} alt={participant.fullName ?? 'Avatar Image'} width="w-12" />
+                <Avatar src={participant.avatarPath} alt={participant.fullName ?? 'Avatar Image'} width="w-12" />
               {/each}
             </div>
             <div class="grow">

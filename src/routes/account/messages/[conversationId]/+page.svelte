@@ -86,11 +86,11 @@
               <p class="w-fit max-w-[40vw] break-words">{message.text}</p>
             </div>
 
-            <Avatar src={message.sender.avatarSrc} width="w-12" />
+            <Avatar src={message.sender.avatarPath} width="w-12" />
           </div>
         {:else}
           <div class="grid grid-cols-[auto_1fr] gap-2">
-            <Avatar src={message.sender.avatarSrc} width="w-12" />
+            <Avatar src={message.sender.avatarPath} width="w-12" />
 
             <div class="card variant-filled-secondary space-y-2 rounded-tl-none p-4">
               <header class="flex items-center justify-between">

@@ -24,25 +24,12 @@ export async function load({ params: { conversationId }, locals: { prisma, authR
     await prisma.newMessageNotification.delete({ where: { id: notification.id } });
   }
 
-  const getMessages = async () => {
-    const messages = await prisma.message.findMany({
+  return {
+    messages: prisma.message.findMany({
       where: { conversationId },
       include: { sender: true },
       orderBy: { createdAt: 'asc' }
-    });
-
-    // TODO: getPublicBucketUrl(supabase, m.sender.avatarPath)
-    return messages.map((m) => ({
-      ...m,
-      sender: {
-        ...m.sender,
-        avatarSrc: ''
-      }
-    }));
-  };
-
-  return {
-    messages: getMessages(),
+    }),
     conversation,
     form: superValidate(messageSchema)
   };

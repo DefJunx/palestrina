@@ -11,25 +11,15 @@ export async function load({ locals: { getProfile, prisma, authRequest } }) {
 
   const profile = await getProfile(user.userId);
 
-  const getConversations = async () => {
-    const conversations = await prisma.conversation.findMany({
+  return {
+    conversations: prisma.conversation.findMany({
       where: {
         participants: { some: { id: profile.id } }
       },
       include: {
         participants: true
       }
-    });
-
-    // TODO: getPublicBucketUrl(supabase, p.avatarPath)
-    return conversations.map((c) => ({
-      ...c,
-      participants: c.participants.map((p) => ({ ...p, avatarSrc: '' }))
-    }));
-  };
-
-  return {
-    conversations: getConversations(),
+    }),
     users: prisma.profile.findMany({ where: { id: { not: profile.id } } }),
     form: superValidate(conversationSchema)
   };
