@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model AuthUser {
@@ -90,9 +89,10 @@ model Message {
 model Exercise {
   id String @id @default(uuid())
 
-  name      String
-  videoPath String?
-  photoPath String?
+  name        String
+  description String  @db.VarChar(600)
+  videoPath   String?
+  photoPath   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

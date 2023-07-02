@@ -25,7 +25,6 @@ export const actions = {
     let avatarPath: string | undefined;
 
     if (!form.valid) {
-      // Again, always return { form } and things will just work.
       return fail(400, { form });
     }
 
