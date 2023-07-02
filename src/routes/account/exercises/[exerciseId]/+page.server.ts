@@ -1,9 +1,11 @@
-import { fail } from '@sveltejs/kit';
+import { fail, type Actions } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/server';
 import { v4 as uuidv4 } from 'uuid';
 import { newExerciseSchema } from './validation.schema';
+import type { PageServerLoad } from './$types.js';
+import { uploadExercisePhoto, uploadExerciseVideo } from '$src/lib/server/cloudinary';
 
-export async function load({ params: { exerciseId }, locals: { prisma } }) {
+export const load = (async ({ params: { exerciseId }, locals: { prisma } }) => {
   if (exerciseId === 'new') {
     return { form: superValidate(newExerciseSchema) };
   }
@@ -11,7 +13,7 @@ export async function load({ params: { exerciseId }, locals: { prisma } }) {
   const exercise = await prisma.exercise.findFirstOrThrow({ where: { id: exerciseId } });
 
   return { form: superValidate({ name: exercise.name }, newExerciseSchema) };
-}
+}) satisfies PageServerLoad;
 
 export const actions = {
   createExercise: async ({ request, locals: { prisma } }) => {
@@ -25,10 +27,6 @@ export const actions = {
     }
 
     const exerciseId = uuidv4();
-
-    // TODO
-    // const photo = formData.get('photo')?.valueOf() as File;
-    // const video = formData.get('video')?.valueOf() as File;
 
     // if (photo.size !== 0) {
     //   const { data: photoData, error: photoError } = await supabase.storage
@@ -58,9 +56,25 @@ export const actions = {
 
     console.log(form.data);
 
-    await prisma.exercise.create({
+    const newExercise = await prisma.exercise.create({
       data: { id: exerciseId, name: form.data.name, description: form.data.description, photoPath, videoPath }
     });
+
+    try {
+      // TODO
+      const photo = formData.get('photo')?.valueOf() as File;
+      const video = formData.get('video')?.valueOf() as File;
+
+      if (photo && photo.size !== 0) {
+        uploadExercisePhoto(photo, newExercise.id);
+      }
+
+      if (video && video.size !== 0) {
+        uploadExerciseVideo(video, newExercise.id);
+      }
+    } catch {
+      return { form };
+    }
 
     return { form };
   },
@@ -112,4 +126,4 @@ export const actions = {
       }
     });
   }
-};
+} satisfies Actions;

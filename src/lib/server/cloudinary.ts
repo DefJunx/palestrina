@@ -32,6 +32,8 @@ const uploadFile = (path: string, buffer: Buffer, resourceType?: 'image' | 'vide
 export default cloudinary;
 
 export const AVATARS_SUBFOLDER = 'avatars';
+export const EXERCISE_PHOTOS_SUBFOLDER = 'exercise_photos';
+export const EXERCISE_VIDEOS_SUBFOLDER = 'exercise_videos';
 
 export async function uploadAvatar(avatarFile: File, userId: string): Promise<string | undefined> {
   const path = `${AVATARS_SUBFOLDER}/${userId}`;
@@ -40,6 +42,34 @@ export async function uploadAvatar(avatarFile: File, userId: string): Promise<st
 
   try {
     const cloudinaryResponse = await uploadFile(path, buffer, 'image');
+    return cloudinary.url(cloudinaryResponse.public_id, { version: cloudinaryResponse.version });
+  } catch (e) {
+    captureException(e);
+    return undefined;
+  }
+}
+
+export async function uploadExercisePhoto(file: File, exerciseId: string) {
+  const path = `${EXERCISE_PHOTOS_SUBFOLDER}/${exerciseId}`;
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  try {
+    const cloudinaryResponse = await uploadFile(path, buffer, 'image');
+    return cloudinary.url(cloudinaryResponse.public_id, { version: cloudinaryResponse.version });
+  } catch (e) {
+    captureException(e);
+    return undefined;
+  }
+}
+
+export async function uploadExerciseVideo(file: File, exerciseId: string) {
+  const path = `${EXERCISE_PHOTOS_SUBFOLDER}/${exerciseId}`;
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  try {
+    const cloudinaryResponse = await uploadFile(path, buffer, 'video');
     return cloudinary.url(cloudinaryResponse.public_id, { version: cloudinaryResponse.version });
   } catch (e) {
     captureException(e);
