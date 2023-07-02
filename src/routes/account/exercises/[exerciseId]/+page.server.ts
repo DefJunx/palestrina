@@ -56,7 +56,11 @@ export const actions = {
     //   videoPath = videoData?.path;
     // }
 
-    await prisma.exercise.create({ data: { id: exerciseId, name: form.data.name, photoPath, videoPath } });
+    console.log(form.data);
+
+    await prisma.exercise.create({
+      data: { id: exerciseId, name: form.data.name, description: form.data.description, photoPath, videoPath }
+    });
 
     return { form };
   },

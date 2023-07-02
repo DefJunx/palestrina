@@ -6,5 +6,11 @@ export const newExerciseSchema = z.object({
       invalid_type_error: 'Il nome deve essere una stringa.',
       required_error: 'Questo campo è obbligatorio'
     })
+    .nonempty({ message: 'Questo campo è obbligatorio' }),
+  description: z
+    .string({
+      invalid_type_error: 'Il nome deve essere una stringa.',
+      required_error: 'Questo campo è obbligatorio'
+    })
     .nonempty({ message: 'Questo campo è obbligatorio' })
 });

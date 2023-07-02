@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
   import { toastStore } from '@skeletonlabs/skeleton';
   import { ChevronLeft } from 'lucide-svelte';
   import { superForm } from 'sveltekit-superforms/client';
+
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
+  import TipTap from '$src/lib/components/TipTap.svelte';
 
   export let data;
 
@@ -27,8 +29,11 @@
       // }
     }
   });
+
   let photos: FileList | undefined;
   let videos: FileList | undefined;
+  let charsTyped = 0;
+  let maxChars = 400;
 </script>
 
 <div class="flex items-center gap-2">
@@ -46,15 +51,29 @@
       {/if}
     </label>
   </div>
-  <label class="label">
-    <span>Foto</span>
-    <input type="file" class="input" name="photo" accept="image/*" bind:files={photos} />
-  </label>
 
-  <label class="label">
-    <span>Video</span>
-    <input type="file" class="input" name="video" accept="video/*" bind:files={videos} />
-  </label>
+  <div>
+    <label class="label">
+      <span>Descrizione</span>
+
+      <TipTap bind:content={$form.description} bind:charsTyped {maxChars} />
+      <input type="hidden" name="description" bind:value={$form.description} />
+    </label>
+
+    <span>{maxChars - charsTyped} / {maxChars}</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <label class="label">
+      <span>Foto</span>
+      <input type="file" class="input" name="photo" accept="image/*" bind:files={photos} />
+    </label>
+
+    <label class="label">
+      <span>Video</span>
+      <input type="file" class="input" name="video" accept="video/*" bind:files={videos} />
+    </label>
+  </div>
 
   <div class="text-right">
     <button disabled={$submitting} class="md:btn-lg btn variant-filled-primary" type="submit"
